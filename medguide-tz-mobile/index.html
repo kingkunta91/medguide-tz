@@ -1,0 +1,2331 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#006b5e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="MedGuide TZ">
+  <meta name="application-name" content="MedGuide TZ">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <title>MedGuide TZ</title>
+  <style>
+    :root {
+      --ink: #10211f;
+      --muted: #5d6c68;
+      --line: #dbe5e0;
+      --panel: #ffffff;
+      --wash: #f4f7f6;
+      --brand: #006b5e;
+      --deep: #173c49;
+      --brand-2: #a83f39;
+      --amber: #996b12;
+      --blue: #255f93;
+      --ok: #1f7a4d;
+      --shadow: 0 14px 34px rgba(16, 33, 31, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(#fbfcfc, var(--wash));
+      letter-spacing: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    header {
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      box-shadow: 0 8px 24px rgba(16, 33, 31, 0.06);
+      backdrop-filter: blur(14px);
+    }
+    .topbar {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.25rem, 2vw, 1.9rem);
+      line-height: 1.1;
+      color: var(--deep);
+    }
+    .app-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .app-brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 107, 94, 0.18);
+      flex: 0 0 auto;
+    }
+    .subtitle {
+      margin: 5px 0 0;
+      color: #62736f;
+      font-size: 0.88rem;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      background: #edf5f2;
+      border: 1px solid var(--line);
+      padding: 4px;
+      border-radius: 8px;
+    }
+    .tab {
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      min-width: 112px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .tab.active { background: var(--brand); color: white; box-shadow: 0 6px 16px rgba(0, 107, 94, 0.22); }
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 18px;
+      padding-bottom: calc(18px + env(safe-area-inset-bottom));
+    }
+    .notice {
+      background: #fffaf0;
+      border: 1px solid #ead69f;
+      color: #4c3808;
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+      box-shadow: 0 10px 24px rgba(154, 112, 24, 0.06);
+    }
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(210px, 1fr) minmax(190px, 260px) auto;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: center;
+    }
+    input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 6px;
+      padding: 12px 12px;
+      font: inherit;
+      color: var(--ink);
+      min-height: 44px;
+      box-shadow: 0 6px 16px rgba(16, 33, 31, 0.035);
+    }
+    input:focus, select:focus, button:focus-visible, summary:focus-visible {
+      outline: 3px solid rgba(0, 107, 94, 0.22);
+      outline-offset: 2px;
+    }
+    .chips { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+    .chip {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 11px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+    .chip.active {
+      background: #e3f3ee;
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 12px;
+    }
+    .protocol-level-panel {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      line-height: 1.35;
+      border-left: 4px solid var(--brand);
+    }
+    .protocol-level-panel strong { color: var(--brand); }
+    .protocol-list {
+      display: grid;
+      gap: 8px;
+    }
+    .protocol-item {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .protocol-item[open] {
+      border-color: #bfd8d1;
+      box-shadow: 0 18px 42px rgba(16, 33, 31, 0.1);
+    }
+    .protocol-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px 15px;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .protocol-item summary::-webkit-details-marker { display: none; }
+    .protocol-item summary::before {
+      content: "+";
+      grid-column: 3;
+      grid-row: 1;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      font-weight: 900;
+      color: var(--brand);
+      background: #f4faf8;
+    }
+    .protocol-item[open] summary::before { content: "-"; }
+    .protocol-title {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+    .protocol-title h2 {
+      margin: 0;
+      font-size: 1.02rem;
+      line-height: 1.2;
+    }
+    .protocol-title span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .card h2, .calc-card h2 {
+      margin: 0;
+      font-size: 1.06rem;
+      line-height: 1.2;
+    }
+    .card-head {
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      align-items: flex-start;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: white;
+      background: var(--blue);
+      white-space: nowrap;
+      letter-spacing: 0;
+    }
+    .tag.red { background: var(--brand-2); }
+    .tag.amber { background: var(--amber); }
+    .tag.green { background: var(--ok); }
+    .body { padding: 14px; }
+    .steps {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .steps li { margin: 0 0 8px; line-height: 1.35; }
+    .danger {
+      margin-top: 10px;
+      padding: 10px;
+      background: #fff3f1;
+      border-left: 4px solid var(--brand-2);
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    .level-box {
+      margin-top: 10px;
+      padding: 10px;
+      background: #edf8f4;
+      border-left: 4px solid var(--brand);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+    .med-box {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f3f7fc;
+      border-left: 4px solid var(--blue);
+      border-radius: 4px;
+    }
+    .med-box h3 {
+      margin: 0 0 8px;
+      font-size: 0.92rem;
+    }
+    .med-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 0.88rem;
+      line-height: 1.35;
+    }
+    .med-list li { margin-bottom: 6px; }
+    .source {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+    .source a { color: var(--brand); font-weight: 700; }
+    .calc-layout {
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .calc-menu {
+      position: sticky;
+      top: 86px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .calc-menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: white;
+      padding: 12px 14px;
+      cursor: pointer;
+      font: inherit;
+      color: var(--ink);
+      min-height: 58px;
+    }
+    .calc-menu button.active {
+      background: #e5f2ee;
+      color: var(--brand);
+      font-weight: 800;
+      box-shadow: inset 4px 0 0 var(--brand);
+    }
+    .calc-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      border-top: 4px solid var(--brand);
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+    .result {
+      border: 1px solid var(--line);
+      background: #f4faf8;
+      border-radius: 6px;
+      padding: 14px;
+      min-height: 86px;
+    }
+    .cutoff-box {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .cutoff-box h3 {
+      margin: 0 0 8px;
+      font-size: 0.92rem;
+    }
+    .cutoff-box ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.35;
+    }
+    .cutoff-box li { margin-bottom: 5px; }
+    .value {
+      display: block;
+      font-size: clamp(1.4rem, 3vw, 2.3rem);
+      font-weight: 900;
+      color: var(--deep);
+      margin-bottom: 4px;
+    }
+    .formula, .small {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.35;
+    }
+    .hidden { display: none; }
+    footer {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 12px 18px 28px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    @media (max-width: 760px) {
+      body { padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+      header { top: 0; }
+      .topbar {
+        grid-template-columns: 1fr;
+        padding: 12px 14px 10px;
+        gap: 10px;
+      }
+      .subtitle { font-size: 0.8rem; }
+      h1 { font-size: 1.22rem; }
+      main { padding: 12px; }
+      .notice { font-size: 0.84rem; padding: 10px; }
+      .toolbar, .calc-layout { grid-template-columns: 1fr; }
+      .chips {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+      }
+      .chips::-webkit-scrollbar { display: none; }
+      .chip { flex: 0 0 auto; }
+      .calc-menu { position: static; }
+      .tabs {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 9;
+        width: 100%;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
+        padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+        box-shadow: 0 -10px 26px rgba(17, 38, 33, 0.12);
+      }
+      .tab { flex: 1; min-width: 0; }
+      .protocol-item summary {
+        grid-template-columns: 1fr auto;
+        padding: 13px 12px;
+      }
+      .protocol-item summary::before {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+      }
+      .protocol-item .tag {
+        grid-column: 1;
+        justify-self: start;
+      }
+      .body { padding: 12px; }
+      .form-grid { grid-template-columns: 1fr; }
+      footer { padding-bottom: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div>
+        <div class="app-brand">
+          <img src="./icon.svg" alt="" width="42" height="42">
+          <div>
+            <h1>MedGuide TZ</h1>
+            <p class="subtitle">Medical emergency protocols with in-protocol doses, plus calculators and scores for clinical practice in Tanzania. Updated source review: 1 June 2026.</p>
+          </div>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="Main sections">
+        <button class="tab active" data-view="protocols">Protocols</button>
+        <button class="tab" data-view="calculators">Calculators</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="notice">
+      Use as a clinical aid only. Medicine doses appear inside emergency protocols, not as a standalone formulary. Confirm contraindications, stock formulations, pregnancy status, allergies, renal function, and local facility policy before treatment. Escalate early for critically ill patients.
+    </div>
+
+    <section id="protocolsView">
+      <div class="toolbar">
+        <input id="protocolSearch" type="search" placeholder="Search emergencies, symptoms, protocol medicines, ABCDE, sepsis...">
+        <select id="facilityLevel" aria-label="Hospital level">
+          <option value="dispensary">Dispensary / clinic</option>
+          <option value="healthCentre">Health centre</option>
+          <option value="district" selected>District hospital</option>
+          <option value="regional">Regional referral hospital</option>
+          <option value="tertiary">Zonal / national hospital</option>
+        </select>
+        <div class="chips" id="protocolChips"></div>
+      </div>
+      <div class="protocol-level-panel" id="levelSummary"></div>
+      <div class="protocol-list" id="protocolGrid"></div>
+    </section>
+
+    <section id="calculatorsView" class="hidden">
+      <div class="toolbar">
+        <input id="calcSearch" type="search" placeholder="Search calculators: fluids, GCS, renal, obstetrics, paediatrics...">
+        <span></span>
+        <div class="chips" id="calcChips"></div>
+      </div>
+      <div class="calc-layout">
+        <div class="calc-menu" id="calcMenu"></div>
+        <div class="calc-card" id="calcPanel"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Built by Dr. Michael Wambura, a medical doctor at Naturra Wellness Hub. Main references include Tanzania Ministry of Health Standard Treatment Guidelines and National Essential Medicines List, WHO Emergency Care Toolkit, WHO/ICRC Basic Emergency Care, WHO Interagency Integrated Triage Tool, WHO Emergency Unit Checklist, WHO mhGAP Humanitarian Intervention Guide, WHO Managing Complications in Pregnancy and Childbirth, and WHO Pocket Book of Hospital Care for Children. This file is intentionally offline-friendly; refresh against source documents before institutional deployment.
+  </footer>
+
+  <script>
+    const sources = {
+      tz: ['Tanzania STG/NEMLIT 2021, MoH/WHO CPCD', 'https://extranet.who.int/cpcd/health-legislation/standard-treatment-guidelines-and-national-essential-medicines-list-tanzania'],
+      whoEct: ['WHO Emergency Care Toolkit', 'https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit'],
+      bec: ['WHO/ICRC Basic Emergency Care', 'https://www.who.int/publications/i/item/basic-emergency-care-approach-to-the-acutely-ill-and-injured'],
+      iitt: ['WHO Interagency Integrated Triage Tool', 'https://www.who.int/tools/triage'],
+      checklist: ['WHO Emergency Care Toolkit', 'https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit'],
+      mhgap: ['WHO mhGAP humanitarian intervention guide', 'https://www.who.int/publications/i/item/9789241548922'],
+      obstetric: ['WHO Managing Complications in Pregnancy and Childbirth', 'https://www.who.int/publications/i/item/9789241565493'],
+      paeds: ['WHO Pocket Book of Hospital Care for Children', 'https://www.who.int/publications/i/item/978-92-4-154837-3']
+    };
+
+    const facilityLevels = {
+      dispensary: {
+        label: 'Dispensary / clinic',
+        action: 'Recognise danger signs, start ABCDE, give first-line stabilisation within scope, document times, and arrange urgent referral with pre-alert.',
+        capacity: 'No operating theatre, blood bank, ICU, advanced imaging, or continuous inpatient monitoring assumed.'
+      },
+      healthCentre: {
+        label: 'Health centre',
+        action: 'Stabilise, observe briefly when improving, use available essential medicines, call district/regional team early, and transfer patients needing surgery, blood, specialist review, imaging, or prolonged monitoring.',
+        capacity: 'Basic inpatient, maternity, oxygen, IV treatment, basic laboratory and referral ambulance capability may vary.'
+      },
+      district: {
+        label: 'District hospital',
+        action: 'Provide definitive care for common emergencies, start protocol bundles, use basic theatre/blood/lab/radiology where available, and transfer high-risk or non-responding patients.',
+        capacity: 'General medical, surgical, obstetric, paediatric and laboratory services assumed, but specialist and ICU support limited.'
+      },
+      regional: {
+        label: 'Regional referral hospital',
+        action: 'Manage complex cases, support district transfers, involve specialists early, and refer onward for subspecialty, dialysis, neurosurgery, advanced ICU, cath lab, or oncology needs.',
+        capacity: 'Specialist departments, blood services, imaging, theatre, newborn care, and high-dependency care more likely.'
+      },
+      tertiary: {
+        label: 'Zonal / national hospital',
+        action: 'Provide subspecialty definitive management, advanced diagnostics, ICU/HDU pathways, interventional procedures, and back-referral plans once stable.',
+        capacity: 'Highest-level specialist and teaching services assumed, subject to local availability and bed status.'
+      },
+      extraProtocols: [
+      {
+        title: 'Paediatric Emergency Triage',
+        category: 'Paediatric',
+        urgency: 'red',
+        keywords: 'child etat emergency signs airway breathing circulation coma convulsion dehydration',
+        steps: [
+          'Look for emergency signs: obstructed breathing, severe respiratory distress, central cyanosis, shock, coma, convulsions, severe dehydration with lethargy.',
+          'Treat emergency signs before full history: airway positioning, oxygen, glucose, IV/IO access, fluids for shock, anticonvulsant if convulsing.',
+          'Check weight or estimate weight for dosing; use paediatric doses and avoid adult default doses.',
+          'Screen for severe malaria, pneumonia, meningitis, diarrhoeal dehydration, sepsis, severe anaemia, malnutrition, poisoning, and trauma.',
+          'Reassess after each intervention and keep caregiver informed.'
+        ],
+        danger: 'Any child with emergency signs needs immediate treatment and senior review, not queue-based waiting.',
+        source: ['tz', 'bec', 'paeds']
+      },
+      {
+        title: 'Neonatal Resuscitation',
+        category: 'Neonatal',
+        urgency: 'red',
+        keywords: 'newborn neonatal resuscitation birth asphyxia bag mask apgar hypothermia',
+        steps: [
+          'Prepare warm area, towels, suction if needed, bag-mask, oxygen/air source, clock, and help before delivery when risk is known.',
+          'Dry, warm, position airway, clear secretions only if obstructing, stimulate, and assess breathing/heart rate.',
+          'If not breathing or gasping, start effective bag-mask ventilation within the golden minute.',
+          'Check chest rise and correct mask seal, airway position, secretions, and ventilation pressure if heart rate is not improving.',
+          'After stabilization, prevent hypothermia, check glucose risk, support feeding, and observe for respiratory distress/sepsis.'
+        ],
+        danger: 'Ventilation is the key intervention. Delayed or ineffective bag-mask ventilation is the commonest failure point.',
+        source: ['tz', 'obstetric', 'paeds']
+      },
+      {
+        title: 'Severe Pneumonia',
+        category: 'Respiratory',
+        urgency: 'red',
+        keywords: 'pneumonia hypoxia child adult oxygen antibiotics chest indrawing danger signs',
+        steps: [
+          'Assess RR, work of breathing, SpO2, cyanosis, mental status, hydration, HIV/TB risk, pregnancy, and comorbid disease.',
+          'Give oxygen for hypoxia or severe respiratory distress and antibiotics according to Tanzania STG age/risk group.',
+          'Check glucose in severe illness; treat fever, dehydration, wheeze, and sepsis if present.',
+          'Consider TB, PCP, aspiration, heart failure, COVID/influenza, and pulmonary embolism depending on context.',
+          'Reassess respiratory rate, SpO2, feeding/ability to drink, mental status, and response to treatment.'
+        ],
+        danger: 'Central cyanosis, inability to drink/feed, grunting, severe chest indrawing, exhaustion, or altered consciousness requires urgent referral/escalation.',
+        source: ['tz', 'paeds', 'bec']
+      },
+      {
+        title: 'Acute Abdomen',
+        category: 'Surgical',
+        urgency: 'amber',
+        keywords: 'abdominal pain appendicitis perforation obstruction peritonitis ectopic pancreatitis',
+        steps: [
+          'ABCDE first if shocked; give analgesia, antiemetic, nil by mouth, IV access, fluids, pregnancy test where relevant.',
+          'Look for peritonitis, obstruction, strangulated hernia, perforation, ectopic pregnancy, ruptured aneurysm, pancreatitis, and sepsis.',
+          'Check vitals, urine output, glucose, haemoglobin if available, urinalysis, malaria test where relevant, and focused imaging/labs by level.',
+          'Start antibiotics for peritonitis, perforation, sepsis, or complicated intra-abdominal infection per STG.',
+          'Call surgical/obstetric team early; prepare transfer if theatre, blood, imaging, or specialist care is unavailable.'
+        ],
+        danger: 'Shock, guarding/rigidity, persistent vomiting, distension, pregnancy, severe pain out of proportion, or strangulated hernia are high risk.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Head Injury',
+        category: 'Trauma',
+        urgency: 'red',
+        keywords: 'head injury concussion skull fracture gcs pupils neurosurgery ct trauma',
+        steps: [
+          'Protect cervical spine, ABCDE, oxygen if hypoxic, glucose, GCS components, pupils, limb movement, seizures, anticoagulants, alcohol/drugs.',
+          'Treat hypoxia and hypotension aggressively; both worsen brain injury.',
+          'Manage scalp bleeding, vomiting, pain, seizures, and agitation while avoiding oversedation.',
+          'Keep head elevated if possible, avoid hypoglycaemia/hyperthermia, and repeat neurological observations.',
+          'Refer urgently for deteriorating GCS, unequal pupils, focal deficit, open/depressed skull fracture, persistent vomiting, seizure, penetrating injury, or suspected intracranial bleed.'
+        ],
+        danger: 'A single normal early exam does not make head injury safe. Deterioration during observation is an emergency.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Open Fracture / Limb Threat',
+        category: 'Orthopaedic',
+        urgency: 'amber',
+        keywords: 'fracture open compartment syndrome dislocation neurovascular splint antibiotics tetanus',
+        steps: [
+          'ABCDE first for high-energy trauma; control bleeding and assess distal pulse, capillary refill, sensation, and movement.',
+          'Cover open wounds with sterile dressing, give analgesia, splint, update tetanus, and start antibiotics per STG.',
+          'Reduce gross deformity/dislocation if neurovascular compromise and trained to do so; reassess after splinting.',
+          'Look for compartment syndrome: pain out of proportion, pain on passive stretch, tense swelling, paraesthesia, weakness, late pulselessness.',
+          'Arrange urgent orthopaedic/surgical care for open fracture, neurovascular deficit, compartment syndrome, pelvic/femur fracture, or failed reduction.'
+        ],
+        danger: 'Compartment syndrome is clinical and time-critical; normal pulses do not exclude it.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Meningitis / Encephalitis',
+        category: 'Infectious',
+        urgency: 'red',
+        keywords: 'meningitis encephalitis fever neck stiffness coma seizure ceftriaxone malaria',
+        steps: [
+          'Suspect with fever plus neck stiffness, altered mental status, seizure, severe headache, bulging fontanelle, petechial rash, or sepsis.',
+          'ABCDE, glucose, malaria testing where relevant, blood cultures if feasible without delaying antibiotics.',
+          'Give empiric antibiotics urgently according to age, pregnancy, immune status, and Tanzania STG.',
+          'Treat seizures, hypoglycaemia, shock, fever, and raised intracranial pressure signs; avoid unsafe lumbar puncture.',
+          'Notify public health pathway where epidemic-prone meningitis is suspected.'
+        ],
+        danger: 'Do not delay antibiotics for lumbar puncture or imaging when meningitis is likely.',
+        source: ['tz', 'paeds', 'bec']
+      },
+      {
+        title: 'Severe Acute Malnutrition',
+        category: 'Paediatric',
+        urgency: 'red',
+        keywords: 'sam malnutrition kwashiorkor marasmus oedema hypoglycaemia hypothermia refeeding',
+        steps: [
+          'Identify severe wasting, bilateral pitting oedema, MUAC danger range, poor appetite, lethargy, hypothermia, hypoglycaemia, or infection.',
+          'Treat hypoglycaemia and hypothermia immediately; keep warm and feed carefully using local therapeutic feeding protocol.',
+          'Treat shock cautiously with malnutrition-specific fluid guidance and frequent reassessment.',
+          'Give empiric antibiotics when indicated by national/WHO protocol because infection signs may be subtle.',
+          'Avoid routine iron in the initial stabilization phase unless protocol indicates; transition to rehabilitation feeding when stable.'
+        ],
+        danger: 'Standard rapid fluid boluses can harm severely malnourished children unless true shock is present and carefully managed.',
+        source: ['tz', 'paeds']
+      },
+      {
+        title: 'Sickle Cell Crisis',
+        category: 'Haematology',
+        urgency: 'amber',
+        keywords: 'sickle cell vaso occlusive crisis acute chest anaemia stroke priapism pain',
+        steps: [
+          'Assess pain, fever, SpO2, respiratory symptoms, pallor, spleen size, neurological deficits, hydration, and triggers.',
+          'Give prompt analgesia, hydration by clinical status, oxygen if hypoxic, and antibiotics for fever per STG.',
+          'Look for acute chest syndrome, severe anaemia, sepsis, stroke, splenic sequestration, priapism, and aplastic crisis.',
+          'Check haemoglobin and malaria test where available; transfuse or refer according to severity and local protocol.',
+          'Arrange follow-up for hydroxyurea/penicillin/vaccination review where appropriate.'
+        ],
+        danger: 'Chest pain, hypoxia, fever, neurological signs, severe pallor, or enlarging spleen are emergencies.',
+        source: ['tz', 'paeds']
+      },
+      {
+        title: 'Acute Kidney Injury',
+        category: 'Renal',
+        urgency: 'amber',
+        keywords: 'aki renal failure oliguria creatinine potassium dialysis dehydration sepsis',
+        steps: [
+          'Confirm urine output, volume status, BP, sepsis, nephrotoxins, obstruction, pregnancy, malaria, diarrhoea, and heart failure.',
+          'Stop nephrotoxic medicines where safe, dose-adjust renally cleared drugs, check glucose/electrolytes/creatinine if available.',
+          'Treat shock/dehydration or fluid overload according to exam; catheterize if obstruction or strict output monitoring needed.',
+          'Treat hyperkalaemia immediately if suspected with ECG changes, severe renal failure, weakness, or arrhythmia.',
+          'Refer for dialysis/specialist care if refractory hyperkalaemia, pulmonary oedema, severe acidosis, uraemic complications, poisoning requiring dialysis, or persistent anuria.'
+        ],
+        danger: 'Fluid can rescue pre-renal AKI or kill in pulmonary oedema. Reassess after every bolus.',
+        source: ['tz']
+      },
+      {
+        title: 'Upper GI Bleeding',
+        category: 'Gastroenterology',
+        urgency: 'red',
+        keywords: 'haematemesis melena gi bleed varices shock transfusion endoscopy',
+        steps: [
+          'ABCDE, protect airway if massive bleed or reduced consciousness, two large IV lines, type/crossmatch where available.',
+          'Assess shock index, ongoing bleeding, liver disease/varices, NSAIDs, anticoagulants, pregnancy, and comorbid disease.',
+          'Resuscitate with fluids/blood as indicated; correct hypoglycaemia and coagulopathy per local capability.',
+          'Give medicines per STG and suspected cause; keep nil by mouth and arrange endoscopy/surgical review where available.',
+          'Transfer high-risk patients when blood, endoscopy, surgery, or close monitoring is unavailable.'
+        ],
+        danger: 'Normal BP can hide major blood loss, especially in young adults. Tachycardia and syncope matter.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Diarrhoea / Cholera Dehydration',
+        category: 'Infectious',
+        urgency: 'amber',
+        keywords: 'diarrhoea cholera dehydration ors ringer lactate zinc child outbreak',
+        steps: [
+          'Classify dehydration: none, some, or severe; check shock, mental status, thirst, eyes, skin pinch, urine output.',
+          'Use ORS for able patients; IV Ringer lactate/normal saline for severe dehydration or shock according to age and protocol.',
+          'Give zinc for children where indicated; continue feeding/breastfeeding.',
+          'Use antibiotics only for cholera/dysentery/specific indications per national guidance.',
+          'Notify outbreak/public health pathway for suspected cholera and apply infection prevention measures.'
+        ],
+        danger: 'Severe dehydration, lethargy, inability to drink, persistent vomiting, infant age, severe malnutrition, or shock needs urgent care.',
+        source: ['tz', 'paeds']
+      },
+      {
+        title: 'HIV Advanced Disease / Opportunistic Infection',
+        category: 'Infectious',
+        urgency: 'amber',
+        keywords: 'hiv aids tb cryptococcal meningitis pcp opportunistic infection art',
+        steps: [
+          'Assess danger signs, WHO stage clues, ART status/adherence, CD4/viral load if known, TB symptoms, cryptococcal symptoms, pregnancy, and drug interactions.',
+          'Stabilise acute illness first: oxygen, fluids, glucose, antibiotics/antimalarial/TB workup as clinically indicated.',
+          'Consider TB, cryptococcal meningitis, PCP, severe bacterial infection, toxoplasmosis, chronic diarrhoea, severe anaemia, and drug toxicity.',
+          'Follow national HIV/TB guidelines for tests, empiric treatment, prophylaxis, and ART timing.',
+          'Refer urgently for meningitis signs, hypoxia, severe anaemia, severe wasting, treatment failure, or suspected IRIS with instability.'
+        ],
+        danger: 'Starting ART immediately is not always correct in cryptococcal/TB meningitis; follow national timing guidance.',
+        source: ['tz', 'whoEct']
+      },
+      {
+        title: 'TB Emergency Presentations',
+        category: 'Infectious',
+        urgency: 'amber',
+        keywords: 'tb tuberculosis haemoptysis meningitis pericardial effusion spinal pott hiv',
+        steps: [
+          'Screen cough, fever, night sweats, weight loss, TB contact, HIV, pregnancy, previous TB, and danger signs.',
+          'Use infection prevention: mask patient, ventilation, cough etiquette, and staff protection.',
+          'Identify emergencies: massive haemoptysis, TB meningitis, pericardial tamponade, spinal cord compression, severe respiratory failure.',
+          'Send appropriate tests available at level and start treatment/referral according to national TB guidance.',
+          'Coordinate notification, adherence support, HIV testing, and contact tracing.'
+        ],
+        danger: 'Neurological deficit, severe headache/confusion, massive haemoptysis, or tamponade signs require urgent referral.',
+        source: ['tz']
+      },
+      {
+        title: 'Acute Psychosis / Agitation',
+        category: 'Mental Health',
+        urgency: 'amber',
+        keywords: 'psychosis agitation violence delirium restraint suicide alcohol withdrawal',
+        steps: [
+          'Ensure safety, remove hazards, call help, use calm verbal de-escalation, and protect dignity.',
+          'Check for medical causes: hypoglycaemia, hypoxia, head injury, infection, intoxication/withdrawal, eclampsia, meningitis, malaria, drug effects.',
+          'Use the least restrictive approach; physical restraint only when necessary for immediate safety and with monitoring.',
+          'Use medication for severe agitation according to mhGAP/local protocol, considering intoxication, respiratory risk, pregnancy, and elderly patients.',
+          'Assess suicide/homicide risk and arrange safe observation, mental health review, and family/support involvement where appropriate.'
+        ],
+        danger: 'New agitation with fever, abnormal vitals, low glucose, head injury, pregnancy, or fluctuating consciousness is delirium/medical until proven otherwise.',
+        source: ['mhgap', 'tz']
+      },
+      {
+        title: 'Self-Harm / Suicide Risk',
+        category: 'Mental Health',
+        urgency: 'amber',
+        keywords: 'suicide self harm overdose hanging poisoning depression risk assessment',
+        steps: [
+          'Treat medical injury/poisoning first using ABCDE and poisoning protocol.',
+          'Do not leave high-risk patients alone; remove means and maintain respectful observation.',
+          'Ask directly about suicidal thoughts, plan, means, previous attempts, substance use, psychosis, depression, pain, violence, and social supports.',
+          'Create a safety plan, involve trusted support with consent/safety, and arrange mental health review.',
+          'Admit or transfer if persistent intent, high lethality attempt, psychosis, severe intoxication, unsafe home, or no reliable follow-up.'
+        ],
+        danger: 'A patient who becomes quiet after severe distress may still be high risk. Discharge requires a documented safety plan.',
+        source: ['mhgap', 'tz']
+      },
+      {
+        title: 'Eye Emergency: Red Eye / Vision Loss',
+        category: 'Eye',
+        urgency: 'amber',
+        keywords: 'red eye vision loss glaucoma trauma chemical keratitis corneal ulcer',
+        steps: [
+          'Check visual acuity in each eye before treatment if possible, plus pain, photophobia, trauma, contact lens use, discharge, pupil, and corneal opacity.',
+          'Chemical injury: irrigate immediately and continuously before detailed exam.',
+          'Refer same day for reduced vision, severe pain, corneal ulcer/opacity, abnormal pupil, suspected glaucoma, penetrating injury, hyphema, or herpes zoster eye involvement.',
+          'Avoid steroid eye drops unless ophthalmology directs.',
+          'Give analgesia, shield penetrating injuries, tetanus/antibiotics where indicated, and urgent ophthalmology pathway.'
+        ],
+        danger: 'Painful red eye with reduced vision is not simple conjunctivitis.',
+        source: ['tz']
+      },
+      {
+        title: 'ENT Emergency: Airway / Epistaxis',
+        category: 'ENT',
+        urgency: 'amber',
+        keywords: 'epistaxis airway foreign body stridor tonsil abscess ear mastoiditis',
+        steps: [
+          'ABCDE first for stridor, choking, facial/neck swelling, deep neck infection, or bleeding with shock.',
+          'For epistaxis, sit forward, pinch soft nose continuously, check BP/anticoagulants, IV access if heavy, and pack/refer if persistent.',
+          'Do not blindly sweep airway foreign bodies; use back blows/chest thrusts/abdominal thrusts according to age and consciousness.',
+          'Refer deep neck infection, peritonsillar abscess with airway risk, mastoiditis, button battery, sharp foreign body, or uncontrolled bleeding.',
+          'Give analgesia, antibiotics only when indicated, and document airway/bleeding reassessments.'
+        ],
+        danger: 'Stridor, drooling, inability to swallow, neck swelling, or muffled voice can become an airway emergency.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Dental / Maxillofacial Infection',
+        category: 'Dental',
+        urgency: 'amber',
+        keywords: 'dental abscess ludwig angina facial swelling tooth infection airway',
+        steps: [
+          'Assess airway, trismus, floor-of-mouth swelling, dysphagia, fever, sepsis, eye involvement, and immunosuppression/diabetes.',
+          'Give analgesia and antibiotics for spreading infection according to STG; definitive dental drainage/extraction is often required.',
+          'Refer urgently for airway risk, Ludwig angina, orbital signs, deep space infection, sepsis, or inability to open mouth/swallow.',
+          'Avoid repeated antibiotic-only treatment when source control is needed.',
+          'Check glucose in severe infection or known diabetes.'
+        ],
+        danger: 'Floor-of-mouth swelling, tongue elevation, drooling, or voice change is airway danger.',
+        source: ['tz']
+      },
+      {
+        title: 'Transfusion Reaction',
+        category: 'Haematology',
+        urgency: 'red',
+        keywords: 'blood transfusion reaction fever haemolysis anaphylaxis stop transfusion',
+        steps: [
+          'Stop transfusion immediately, keep IV line open with normal saline, and call for help.',
+          'Check patient identity, blood unit details, vitals, urine colour/output, rash, wheeze, back pain, fever, shock, bleeding.',
+          'Treat according to severity: anaphylaxis, shock, fever, haemolysis, TRALI/TACO pathways as clinically indicated.',
+          'Notify blood bank/laboratory and return blood bag/tubing per hospital policy.',
+          'Document reaction timing, unit number, signs, treatment, and future transfusion warning.'
+        ],
+        danger: 'Do not restart the same blood unit after a suspected serious reaction.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Hypertensive Emergency',
+        category: 'Medical',
+        urgency: 'amber',
+        keywords: 'hypertension emergency stroke pulmonary oedema aortic dissection pregnancy',
+        steps: [
+          'Confirm BP with correct cuff and assess for acute target-organ damage: stroke, encephalopathy, ACS, pulmonary oedema, AKI, aortic dissection, eclampsia.',
+          'Treat the patient, not the number; pain/anxiety alone can raise BP.',
+          'Use emergency BP-lowering medicines only when target-organ damage or pregnancy severe hypertension protocol indicates.',
+          'Avoid rapid overcorrection except in specific protocols; monitor neurological status, urine output, chest pain, and dyspnoea.',
+          'Refer if ICU/HDU monitoring, imaging, obstetric care, dialysis, or specialist review is needed.'
+        ],
+        danger: 'Severe BP in pregnancy is a different pathway: assess for pre-eclampsia/eclampsia immediately.',
+        source: ['tz', 'obstetric']
+      },
+      {
+        title: 'Acute Heart Failure / Pulmonary Oedema',
+        category: 'Medical',
+        urgency: 'red',
+        keywords: 'heart failure pulmonary oedema dyspnoea furosemide nitrate oxygen cpap',
+        steps: [
+          'Sit upright, ABCDE, oxygen if hypoxic, ECG, BP, SpO2, glucose, and look for ACS, arrhythmia, renal failure, infection, severe hypertension.',
+          'Use diuretics, nitrates, bronchodilator, antibiotics, anticoagulation, or rate/rhythm management only according to cause and contraindications.',
+          'Avoid unnecessary IV fluids; assess for shock versus congestion carefully.',
+          'Consider non-invasive ventilation/CPAP where available and trained.',
+          'Transfer if persistent hypoxia, shock, ACS/STEMI, dangerous arrhythmia, renal failure, or ventilatory support needed.'
+        ],
+        danger: 'Wheeze can be cardiac asthma. Repeated salbutamol without treating pulmonary oedema can worsen tachycardia.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Febrile Neutropenia / Oncology Emergency',
+        category: 'Oncology',
+        urgency: 'red',
+        keywords: 'cancer chemotherapy neutropenia fever sepsis oncology tumour lysis',
+        steps: [
+          'Any fever after chemotherapy or known neutropenia is sepsis risk; triage high acuity even if patient looks well.',
+          'ABCDE, cultures if available without delaying treatment, glucose, full blood count if available.',
+          'Give broad-spectrum antibiotics urgently according to local oncology/STG protocol.',
+          'Assess for shock, mucositis, line infection, pneumonia, urinary infection, abdominal pain, and dehydration.',
+          'Discuss/transfer to oncology or higher-level care for neutropenia, tumour lysis, spinal cord compression, superior vena cava syndrome, or uncontrolled symptoms.'
+        ],
+        danger: 'Do not wait for neutrophil count if chemotherapy patient is febrile and unwell.',
+        source: ['tz', 'whoEct']
+      }
+      ]
+    };
+
+    const protocols = [
+      {
+        title: 'ABCDE First 10 Minutes',
+        category: 'Core',
+        urgency: 'red',
+        keywords: 'airway breathing circulation disability exposure oxygen shock unconscious triage',
+        steps: [
+          'Call for help, assign team roles, apply PPE, move patient to resuscitation area.',
+          'Airway: look for obstruction, suction, jaw thrust, cervical spine protection after trauma, insert airway adjunct if trained.',
+          'Breathing: give oxygen for severe distress, hypoxia, shock, major trauma, seizure, sepsis, poisoning, or altered consciousness; assess chest movement and treat life threats.',
+          'Circulation: check pulse, capillary refill, bleeding, BP, IV/IO access, glucose, fluids or blood according to shock type.',
+          'Disability/exposure: AVPU/GCS, pupils, glucose, temperature, full exposure while preventing hypothermia.'
+        ],
+        danger: 'Any airway compromise, SpO2 not improving, shock, GCS drop, or persistent seizure needs immediate senior review and transfer planning.',
+        source: ['bec', 'whoEct', 'tz']
+      },
+      {
+        title: 'Cardiac Arrest: BLS/ALS Flow',
+        category: 'Resus',
+        urgency: 'red',
+        keywords: 'cpr arrest acls defibrillation pulseless vf vt asystole pea',
+        steps: [
+          'Confirm unresponsive and not breathing normally; call resuscitation team and start high-quality CPR immediately.',
+          'Compress chest 100-120/min, depth 5-6 cm in adults, full recoil, minimal interruptions; ventilate with bag-mask and oxygen if available.',
+          'Attach defibrillator/AED as soon as possible. Shock VF/pulseless VT; resume CPR immediately after shock.',
+          'For non-shockable rhythm, continue CPR, give adrenaline per local ALS protocol, and search reversible causes.',
+          'Treat Hs and Ts: hypoxia, hypovolaemia, hydrogen ion/acidosis, hypo/hyperkalaemia, hypothermia, tension pneumothorax, tamponade, toxins, thrombosis.'
+        ],
+        danger: 'Do not delay CPR for IV access, airway attempts, or transport unless scene/facility safety requires it.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Anaphylaxis',
+        category: 'Resus',
+        urgency: 'red',
+        keywords: 'allergy adrenaline epinephrine wheeze angioedema rash hypotension',
+        steps: [
+          'Recognize rapid airway/breathing/circulation compromise after exposure, often with skin or mucosal features.',
+          'Remove trigger, lay patient flat with legs raised unless breathing is worse; give high-flow oxygen and establish IV access.',
+          'Give IM adrenaline promptly into the mid-anterolateral thigh using current local adult/paediatric dose guidance.',
+          'Repeat adrenaline if ongoing airway compromise, wheeze, or hypotension; give IV fluids for shock.',
+          'Add antihistamine and corticosteroid after adrenaline; observe because biphasic reactions occur.'
+        ],
+        danger: 'Adrenaline is first-line. Nebulizers, steroids, or antihistamines must not delay IM adrenaline.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Sepsis and Septic Shock',
+        category: 'Medical',
+        urgency: 'red',
+        keywords: 'infection fever qsofa lactate hypotension antibiotics fluids malaria pneumonia meningitis',
+        steps: [
+          'Identify suspected infection with organ dysfunction: altered mentation, fast breathing, hypotension, oliguria, hypoxia, severe weakness, or high-risk pregnancy/neonate.',
+          'Start ABCDE, oxygen if hypoxic or shocked, IV access, glucose, blood cultures if feasible without delaying antibiotics.',
+          'Give broad-spectrum antimicrobials according to Tanzania STG and likely source; include malaria testing/treatment where indicated.',
+          'Give isotonic crystalloid boluses for shock with frequent reassessment for pulmonary oedema.',
+          'Monitor urine output, mental status, BP, pulse, respiratory rate, SpO2, temperature; escalate/transfer if shock persists.'
+        ],
+        danger: 'Shock, altered mental status, meningism, severe malaria, pregnancy, neonates, or immunosuppression require urgent senior input.',
+        source: ['tz', 'whoEct', 'bec']
+      },
+      {
+        title: 'Major Trauma',
+        category: 'Trauma',
+        urgency: 'red',
+        keywords: 'trauma bleeding fracture head injury spine cervical atls shock',
+        steps: [
+          'Use trauma ABCDE with cervical spine protection when mechanism suggests spine injury.',
+          'Control catastrophic bleeding first: direct pressure, tourniquet where appropriate, pelvic binder for suspected pelvic fracture.',
+          'Treat airway obstruction, tension pneumothorax, open pneumothorax, massive haemothorax, and flail chest immediately.',
+          'Avoid excess crystalloid in uncontrolled haemorrhage; activate blood/transfusion pathway if available.',
+          'Document GCS, pupils, limb neurovascular status, analgesia, tetanus status, antibiotics for open wounds, and transfer triggers.'
+        ],
+        danger: 'Hypotension after trauma is bleeding until proven otherwise. Deteriorating GCS or unequal pupils needs urgent neurosurgical referral pathway.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Burns',
+        category: 'Trauma',
+        urgency: 'amber',
+        keywords: 'burn parkland fluid inhalation electrical chemical tbsa',
+        steps: [
+          'Stop burning process; cool thermal burn with clean running water if early, remove jewelry and constrictive clothing.',
+          'Assess airway early: facial burns, soot, hoarseness, stridor, enclosed-space fire, or reduced consciousness are danger signs.',
+          'Estimate TBSA excluding simple erythema; use the burns calculator for initial fluid estimate in major burns.',
+          'Give analgesia, cover with clean dry dressing, prevent hypothermia, check tetanus, and consider antibiotics only when infection or specific indication exists.',
+          'Refer major, circumferential, electrical, chemical, inhalation, hand/face/genital/joint, paediatric, elderly, or comorbid burns.'
+        ],
+        danger: 'Airway swelling can progress fast. Early referral beats heroic late intubation in a poorly equipped setting.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Acute Severe Asthma/COPD',
+        category: 'Medical',
+        urgency: 'red',
+        keywords: 'asthma copd wheeze salbutamol ipratropium oxygen steroid respiratory distress',
+        steps: [
+          'Assess speech, work of breathing, RR, pulse, SpO2, exhaustion, cyanosis, silent chest, and altered consciousness.',
+          'Give controlled oxygen to target appropriate saturation, with caution in known CO2 retainers.',
+          'Give inhaled/nebulized bronchodilator promptly; add ipratropium for severe attacks according to local protocol.',
+          'Give systemic corticosteroid early unless contraindicated.',
+          'Reassess frequently; consider magnesium sulfate, antibiotics only if infection likely, and urgent referral for impending respiratory failure.'
+        ],
+        danger: 'Silent chest, exhaustion, confusion, bradycardia, or falling SpO2 are pre-arrest signs.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Hypoglycaemia and Altered Consciousness',
+        category: 'Medical',
+        urgency: 'red',
+        keywords: 'glucose coma seizure diabetic dextrose unconscious avpu',
+        steps: [
+          'Check capillary glucose immediately in any seizure, coma, weakness, confusion, intoxication, or child with severe illness.',
+          'If low and able to swallow, give oral glucose/sugar; if unable, give IV dextrose per adult/paediatric local guidance.',
+          'If IV access fails, use glucagon if available and appropriate while establishing access.',
+          'Look for cause: insulin/sulfonylurea, sepsis, malaria, malnutrition, renal failure, alcohol, pregnancy.',
+          'Feed when awake and monitor repeat glucose because recurrence is common.'
+        ],
+        danger: 'Do not wait for laboratory confirmation when bedside glucose is low or unavailable and clinical suspicion is high.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Status Epilepticus',
+        category: 'Medical',
+        urgency: 'red',
+        keywords: 'seizure convulsion diazepam lorazepam midazolam status epilepticus eclampsia',
+        steps: [
+          'Protect from injury, position laterally, suction if needed, oxygen, glucose check, IV access, temperature.',
+          'Treat hypoglycaemia immediately and consider infection, malaria, meningitis, trauma, poisoning, alcohol withdrawal, pregnancy/eclampsia.',
+          'Give benzodiazepine first-line per local dose guidance; avoid repeated excessive doses causing respiratory arrest.',
+          'If seizures continue, load second-line antiseizure medicine per protocol and prepare airway support.',
+          'Treat cause and arrange urgent referral if prolonged, recurrent, pregnant, febrile meningism, head injury, or persistent coma.'
+        ],
+        danger: 'In pregnancy or postpartum, treat as eclampsia until proven otherwise and give magnesium sulfate protocol.',
+        source: ['tz', 'mhgap', 'bec']
+      },
+      {
+        title: 'Stroke: FAST to Referral',
+        category: 'Medical',
+        urgency: 'amber',
+        keywords: 'stroke fast weakness speech thrombolysis hypertension bleed cva',
+        steps: [
+          'Confirm time last known well, FAST signs, glucose, BP, oxygen saturation, temperature, anticoagulant use, seizure, trauma.',
+          'ABCDE first; correct hypoglycaemia and hypoxia. Keep nil by mouth until swallow screen.',
+          'Do not lower BP aggressively unless local stroke protocol indicates emergency treatment.',
+          'Arrange urgent imaging-capable referral for suspected acute stroke, especially within reperfusion windows.',
+          'Document neurological findings, onset time, medicines, and contraindication clues.'
+        ],
+        danger: 'Stroke mimics include hypoglycaemia, seizure, infection, migraine, intoxication, and brain mass. Glucose check is non-negotiable.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Acute Coronary Syndrome',
+        category: 'Medical',
+        urgency: 'red',
+        keywords: 'chest pain myocardial infarction stemi nstemi aspirin nitroglycerin ecg',
+        steps: [
+          'Assess ABCDE, vitals, 12-lead ECG early, pain onset, risk factors, contraindications, and differential diagnoses.',
+          'Give aspirin if not allergic and no major bleeding concern; manage oxygen only if hypoxic or in respiratory distress.',
+          'Use nitrates only if BP adequate and no contraindication such as recent PDE5 inhibitor or right ventricular infarct concern.',
+          'Treat pain, arrhythmias, heart failure, and shock; follow Tanzania STG for antiplatelet, anticoagulation, and reperfusion referral.',
+          'Transfer urgently for STEMI or unstable features where definitive care is unavailable.'
+        ],
+        danger: 'Hypotension, syncope, new heart failure, arrhythmia, ongoing severe pain, or STEMI pattern means high-risk ACS.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'DKA / Hyperglycaemic Crisis',
+        category: 'Medical',
+        urgency: 'red',
+        keywords: 'dka diabetes ketones hyperglycaemia acidosis insulin potassium fluids',
+        steps: [
+          'Suspect in diabetes or new presentation with vomiting, abdominal pain, dehydration, deep breathing, confusion, ketones, or high glucose.',
+          'ABCDE, IV access, glucose/ketones, electrolytes if available, infection screen, pregnancy test where relevant.',
+          'Start isotonic fluids carefully; assess shock, age, cardiac/renal disease.',
+          'Start insulin only after initial fluids and potassium assessment/plan according to local protocol.',
+          'Monitor glucose, potassium, mental status, fluid balance, and triggers; refer if severe acidosis, coma, pregnancy, child, or no lab monitoring.'
+        ],
+        danger: 'Insulin without potassium awareness can be dangerous. Cerebral oedema is a major paediatric risk.',
+        source: ['tz']
+      },
+      {
+        title: 'Severe Malaria',
+        category: 'Medical',
+        urgency: 'red',
+        keywords: 'malaria artesunate cerebral severe anaemia hypoglycaemia pregnancy child',
+        steps: [
+          'Recognize danger signs: impaired consciousness, repeated convulsions, respiratory distress/acidosis, shock, jaundice, severe anaemia, hypoglycaemia, renal failure, bleeding, pregnancy.',
+          'Check glucose and treat hypoglycaemia; send malaria test if available but do not delay treatment in high suspicion severe disease.',
+          'Give parenteral artesunate according to Tanzania/WHO guidance, then complete oral ACT when able.',
+          'Treat complications: seizures, anaemia, shock, renal failure, fever, dehydration; avoid overhydration.',
+          'Arrange referral/close monitoring for all severe malaria.'
+        ],
+        danger: 'A negative rapid test does not fully exclude severe malaria when clinical suspicion is high; reassess and investigate alternatives.',
+        source: ['tz', 'whoEct']
+      },
+      {
+        title: 'Poisoning and Overdose',
+        category: 'Medical',
+        urgency: 'amber',
+        keywords: 'poison overdose organophosphate paracetamol charcoal naloxone antidote',
+        steps: [
+          'ABCDE first; remove from exposure, decontaminate skin/eyes safely, protect staff.',
+          'Identify substance, dose, time, route, co-ingestants, intent, and bring container if possible.',
+          'Check glucose, ECG, temperature, pupils, secretions, respiratory depression, seizures.',
+          'Use activated charcoal only when indicated, early, and airway is protected; do not use routinely.',
+          'Give specific antidote when indicated and available; arrange poison centre/senior consultation and mental health review after self-harm.'
+        ],
+        danger: 'Airway protection comes before gastric decontamination. Corrosives, hydrocarbons, seizures, or reduced GCS are high risk.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Postpartum Haemorrhage',
+        category: 'Obstetric',
+        urgency: 'red',
+        keywords: 'pph bleeding postpartum oxytocin uterine massage shock obstetric',
+        steps: [
+          'Call obstetric emergency help, ABCDE, estimate blood loss, two large IV lines, fluids/blood pathway, monitor vitals.',
+          'Massage uterus and give uterotonic according to national protocol; check placenta and genital tract.',
+          'Use 4 Ts: tone, tissue, trauma, thrombin. Treat cause while resuscitating.',
+          'Give tranexamic acid early where indicated and available, within recommended time window.',
+          'Prepare transfer or theatre if bleeding continues despite first-line measures.'
+        ],
+        danger: 'Do not underestimate blood loss. Tachycardia, hypotension, pallor, confusion, or ongoing bleeding demands escalation.',
+        source: ['tz', 'obstetric']
+      },
+      {
+        title: 'Pre-eclampsia / Eclampsia',
+        category: 'Obstetric',
+        urgency: 'red',
+        keywords: 'eclampsia preeclampsia pregnancy hypertension magnesium sulfate seizure',
+        steps: [
+          'In pregnancy or postpartum seizure, protect airway, left lateral position, oxygen, IV access, glucose, BP, urine protein if available.',
+          'Give magnesium sulfate using national regimen and monitor reflexes, respiratory rate, urine output, and toxicity signs.',
+          'Treat severe hypertension with recommended antihypertensive protocol.',
+          'Assess mother and fetus; plan delivery timing with obstetric team after stabilization.',
+          'Keep calcium gluconate available for magnesium toxicity where protocol requires.'
+        ],
+        danger: 'Eclampsia is an obstetric emergency even if BP is not yet documented.',
+        source: ['tz', 'obstetric']
+      }
+    ];
+
+    const calculators = [
+      {
+        id: 'bmi',
+        name: 'BMI',
+        group: 'General',
+        fields: [['weight', 'Weight (kg)'], ['height', 'Height (cm)']],
+        calc: v => {
+          const bmi = v.weight / Math.pow(v.height / 100, 2);
+          let cls = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal range' : bmi < 30 ? 'Overweight' : 'Obesity range';
+          return [bmi, 'kg/m2', cls, 'BMI = weight / height^2. Interpret with pregnancy, oedema, amputation, and ethnicity context.'];
+        }
+      },
+      {
+        id: 'bsa',
+        name: 'Body Surface Area',
+        group: 'General',
+        fields: [['weight', 'Weight (kg)'], ['height', 'Height (cm)']],
+        calc: v => [Math.sqrt((v.height * v.weight) / 3600), 'm2', 'Mosteller estimate', 'Used for dosing and physiology estimates; confirm protocol-specific method.']
+      },
+      {
+        id: 'crcl',
+        name: 'Creatinine Clearance',
+        group: 'Renal',
+        fields: [['age', 'Age (years)'], ['weight', 'Weight (kg)'], ['creatinine', 'Creatinine (umol/L)'], ['sex', 'Sex: male=1, female=0']],
+        calc: v => {
+          const scr = v.creatinine / 88.4;
+          let crcl = ((140 - v.age) * v.weight) / (72 * scr);
+          if (v.sex === 0) crcl *= 0.85;
+          return [crcl, 'mL/min', crcl < 30 ? 'Severe renal impairment range' : crcl < 60 ? 'Reduced renal function range' : 'Dose-check medicines renally cleared', 'Cockcroft-Gault estimate; use actual/ideal/adjusted weight per drug protocol.'];
+        }
+      },
+      {
+        id: 'egfr',
+        name: 'eGFR CKD-EPI 2021',
+        group: 'Renal',
+        fields: [['age', 'Age (years)'], ['creatinine', 'Creatinine (umol/L)'], ['sex', 'Sex: male=1, female=0']],
+        calc: v => {
+          const scr = v.creatinine / 88.4;
+          const female = v.sex === 0;
+          const k = female ? 0.7 : 0.9;
+          const a = female ? -0.241 : -0.302;
+          const egfr = 142 * Math.pow(Math.min(scr / k, 1), a) * Math.pow(Math.max(scr / k, 1), -1.2) * Math.pow(0.9938, v.age) * (female ? 1.012 : 1);
+          return [egfr, 'mL/min/1.73m2', egfr < 30 ? 'High-risk kidney disease range' : egfr < 60 ? 'Reduced eGFR' : 'Preserved/mild reduction', 'Not for acute kidney injury, pregnancy, children, dialysis, or unstable creatinine.'];
+        }
+      },
+      {
+        id: 'map',
+        name: 'Mean Arterial Pressure',
+        group: 'Resus',
+        fields: [['sbp', 'Systolic BP'], ['dbp', 'Diastolic BP']],
+        calc: v => {
+          const map = (v.sbp + 2 * v.dbp) / 3;
+          return [map, 'mmHg', map < 65 ? 'Shock/perfusion danger range' : 'Reassess clinically', 'MAP = DBP + 1/3 pulse pressure. Use with mental status, urine output, lactate if available.'];
+        }
+      },
+      {
+        id: 'shock',
+        name: 'Shock Index',
+        group: 'Resus',
+        fields: [['hr', 'Heart rate'], ['sbp', 'Systolic BP']],
+        calc: v => {
+          const si = v.hr / v.sbp;
+          return [si, '', si >= 0.9 ? 'Concerning for shock/bleeding/sepsis' : 'Lower risk, reassess trend', 'Shock index = HR / SBP. Pregnancy, children, beta-blockers, and athletes need context.'];
+        }
+      },
+      {
+        id: 'gcs',
+        name: 'Glasgow Coma Scale',
+        group: 'Resus',
+        fields: [['eye', 'Eye 1-4'], ['verbal', 'Verbal 1-5'], ['motor', 'Motor 1-6']],
+        calc: v => {
+          const gcs = v.eye + v.verbal + v.motor;
+          return [gcs, '/15', gcs <= 8 ? 'Severe: airway risk' : gcs <= 12 ? 'Moderate impairment' : 'Mild or normal', 'Document components, not only total: E' + v.eye + ' V' + v.verbal + ' M' + v.motor + '.'];
+        }
+      },
+      {
+        id: 'qsofa',
+        name: 'qSOFA',
+        group: 'Resus',
+        fields: [['rr', 'Respiratory rate'], ['sbp', 'Systolic BP'], ['mental', 'Altered mental status: yes=1, no=0']],
+        calc: v => {
+          const score = (v.rr >= 22 ? 1 : 0) + (v.sbp <= 100 ? 1 : 0) + (v.mental ? 1 : 0);
+          return [score, '/3', score >= 2 ? 'High risk in suspected infection' : 'Does not rule out sepsis', 'qSOFA supports risk recognition; do not use it to delay sepsis treatment.'];
+        }
+      },
+      {
+        id: 'parkland',
+        name: 'Burns Fluid: Parkland',
+        group: 'Fluids',
+        fields: [['weight', 'Weight (kg)'], ['tbsa', 'Burn TBSA %']],
+        calc: v => {
+          const total = 4 * v.weight * v.tbsa;
+          return [total, 'mL first 24h', 'Give half in first 8h from time of burn, half over next 16h', 'Initial estimate for major burns. Titrate to urine output and clinical status; avoid simple erythema in TBSA.'];
+        }
+      },
+      {
+        id: 'maintenance',
+        name: 'Paediatric Maintenance Fluids',
+        group: 'Fluids',
+        fields: [['weight', 'Weight (kg)']],
+        calc: v => {
+          let daily = Math.min(v.weight, 10) * 100 + Math.max(Math.min(v.weight - 10, 10), 0) * 50 + Math.max(v.weight - 20, 0) * 20;
+          return [daily / 24, 'mL/hour', Math.round(daily) + ' mL/day by 100-50-20 rule', 'Adjust for dehydration, shock, cardiac/renal disease, electrolytes, fever, and local paediatric protocol.'];
+        }
+      },
+      {
+        id: 'drops',
+        name: 'IV Drip Rate',
+        group: 'Fluids',
+        fields: [['volume', 'Volume (mL)'], ['hours', 'Time (hours)'], ['factor', 'Drop factor (gtt/mL)']],
+        calc: v => [v.volume * v.factor / (v.hours * 60), 'drops/min', 'Manual drip estimate', 'Use an infusion pump for vasoactive drugs, insulin, magnesium sulfate, paediatric critical infusions, or high-risk medicines.']
+      },
+      {
+        id: 'anion',
+        name: 'Anion Gap',
+        group: 'Electrolytes',
+        fields: [['na', 'Sodium'], ['cl', 'Chloride'], ['hco3', 'Bicarbonate']],
+        calc: v => {
+          const ag = v.na - (v.cl + v.hco3);
+          return [ag, 'mmol/L', ag > 12 ? 'Raised by common adult reference range' : 'Not raised by common adult reference range', 'Albumin correction may be needed; use local lab reference intervals.'];
+        }
+      },
+      {
+        id: 'correctedNa',
+        name: 'Corrected Sodium in Hyperglycaemia',
+        group: 'Electrolytes',
+        fields: [['na', 'Measured sodium'], ['glucose', 'Glucose (mmol/L)']],
+        calc: v => {
+          const corr = v.na + 1.6 * ((v.glucose - 5.6) / 5.6);
+          return [corr, 'mmol/L', 'Estimate using 1.6 mmol/L correction per 5.6 mmol/L glucose above normal', 'Formula varies by protocol and severe hyperglycaemia; trend with osmolality and clinical status.'];
+        }
+      },
+      {
+        id: 'calcium',
+        name: 'Corrected Calcium',
+        group: 'Electrolytes',
+        fields: [['calcium', 'Measured calcium (mmol/L)'], ['albumin', 'Albumin (g/L)']],
+        calc: v => {
+          const corr = v.calcium + 0.02 * (40 - v.albumin);
+          return [corr, 'mmol/L', corr < 2.1 ? 'Low range' : corr > 2.6 ? 'High range' : 'Approx normal range', 'Use local lab intervals. Ionized calcium is preferred in critical illness.'];
+        }
+      },
+      {
+        id: 'edd',
+        name: 'Estimated Due Date',
+        group: 'Obstetric',
+        fields: [['lmpDay', 'LMP day'], ['lmpMonth', 'LMP month'], ['lmpYear', 'LMP year']],
+        calc: v => {
+          const d = new Date(v.lmpYear, v.lmpMonth - 1, v.lmpDay);
+          d.setDate(d.getDate() + 280);
+          return [d.toISOString().slice(0, 10), '', 'Naegele estimate', 'Use ultrasound dating when available, especially if LMP uncertain or cycles irregular.'];
+        }
+      },
+      {
+        id: 'gestAge',
+        name: 'Gestational Age by LMP',
+        group: 'Obstetric',
+        fields: [['lmpDay', 'LMP day'], ['lmpMonth', 'LMP month'], ['lmpYear', 'LMP year']],
+        calc: v => {
+          const lmp = new Date(v.lmpYear, v.lmpMonth - 1, v.lmpDay);
+          const now = new Date();
+          const days = Math.floor((now - lmp) / 86400000);
+          return [Math.floor(days / 7) + 'w ' + (days % 7) + 'd', '', days < 0 ? 'Future LMP entered' : 'Estimated gestational age today', 'Confirm with ultrasound where available and reconcile with fundal height and fetal assessment.'];
+        }
+      },
+      {
+        id: 'obShock',
+        name: 'Obstetric Shock Index',
+        group: 'Obstetric',
+        fields: [['hr', 'Heart rate'], ['sbp', 'Systolic BP']],
+        calc: v => {
+          const osi = v.hr / v.sbp;
+          return [osi, '', osi >= 1 ? 'High concern in obstetric bleeding/sepsis' : 'Continue close reassessment', 'Obstetric shock can be masked until late; trend with bleeding, mental status, urine output, and Hb.'];
+        }
+      },
+      {
+        id: 'apgar',
+        name: 'APGAR Score',
+        group: 'Neonatal',
+        fields: [['appearance', 'Appearance 0-2'], ['pulse', 'Pulse 0-2'], ['grimace', 'Grimace 0-2'], ['activity', 'Activity 0-2'], ['respiration', 'Respiration 0-2']],
+        calc: v => {
+          const score = v.appearance + v.pulse + v.grimace + v.activity + v.respiration;
+          return [score, '/10', score < 4 ? 'Severely low' : score < 7 ? 'Moderately low' : 'Reassuring range', 'APGAR documents response; do not delay neonatal resuscitation to calculate it.'];
+        }
+      },
+      {
+        id: 'pedsBolus',
+        name: 'Paediatric Fluid Bolus',
+        group: 'Fluids',
+        fields: [['weight', 'Weight (kg)'], ['mlkg', 'Bolus mL/kg']],
+        calc: v => [v.weight * v.mlkg, 'mL', 'Calculated bolus volume', 'Use cautious disease-specific guidance in severe malnutrition, DKA, cardiac/renal disease, severe anaemia, or respiratory distress.']
+      },
+      {
+        id: 'transfusionVol',
+        name: 'Paediatric Transfusion Volume',
+        group: 'Haematology',
+        fields: [['weight', 'Weight (kg)'], ['mlkg', 'Volume mL/kg']],
+        calc: v => [v.weight * v.mlkg, 'mL', 'Packed/RBC volume estimate', 'Confirm component type, Hb target, heart failure risk, consent, crossmatch, and transfusion reaction monitoring.']
+      },
+      {
+        id: 'oxygenation',
+        name: 'SpO2/FiO2 Ratio',
+        group: 'Respiratory',
+        fields: [['spo2', 'SpO2 %'], ['fio2', 'FiO2 %']],
+        calc: v => {
+          const ratio = v.spo2 / (v.fio2 / 100);
+          return [ratio, '', ratio < 235 ? 'Severe oxygenation concern' : ratio < 315 ? 'Moderate oxygenation concern' : 'Interpret clinically', 'Use only when SpO2 is reasonably reliable; ABG PaO2/FiO2 is preferred when available.'];
+        }
+      },
+      {
+        id: 'pfRatio',
+        name: 'PaO2/FiO2 Ratio',
+        group: 'Respiratory',
+        fields: [['pao2', 'PaO2'], ['fio2', 'FiO2 %']],
+        calc: v => {
+          const ratio = v.pao2 / (v.fio2 / 100);
+          return [ratio, '', ratio < 100 ? 'Severe ARDS range' : ratio < 200 ? 'Moderate ARDS range' : ratio < 300 ? 'Mild ARDS range' : 'Above ARDS oxygenation threshold', 'Requires compatible units and clinical ARDS criteria.'];
+        }
+      },
+      {
+        id: 'serumOsm',
+        name: 'Calculated Serum Osmolality',
+        group: 'Electrolytes',
+        fields: [['na', 'Sodium'], ['glucose', 'Glucose mmol/L'], ['urea', 'Urea mmol/L']],
+        calc: v => [2 * v.na + v.glucose + v.urea, 'mOsm/kg', 'Calculated osmolality', 'Compare with measured osmolality for osmolar gap when poisoning or DKA/HHS is suspected.']
+      },
+      {
+        id: 'osmGap',
+        name: 'Osmolar Gap',
+        group: 'Toxicology',
+        fields: [['measured', 'Measured osmolality'], ['na', 'Sodium'], ['glucose', 'Glucose mmol/L'], ['urea', 'Urea mmol/L']],
+        calc: v => {
+          const calc = 2 * v.na + v.glucose + v.urea;
+          const gap = v.measured - calc;
+          return [gap, 'mOsm/kg', gap > 10 ? 'Raised osmolar gap' : 'Not raised by common threshold', 'Consider toxic alcohols, ethanol, mannitol, ketoacidosis, renal failure; use local toxicology advice.'];
+        }
+      },
+      {
+        id: 'freeWater',
+        name: 'Free Water Deficit',
+        group: 'Electrolytes',
+        fields: [['weight', 'Weight (kg)'], ['na', 'Sodium'], ['sex', 'Sex: male=1, female=0']],
+        calc: v => {
+          const tbw = v.weight * (v.sex === 1 ? 0.6 : 0.5);
+          const deficit = tbw * ((v.na / 140) - 1);
+          return [Math.max(deficit, 0), 'L', 'Approximate water deficit', 'Correct sodium slowly unless specialist emergency guidance says otherwise; account for ongoing losses.'];
+        }
+      },
+      {
+        id: 'childPugh',
+        name: 'Child-Pugh Score',
+        group: 'Gastroenterology',
+        fields: [['bili', 'Bilirubin points 1-3'], ['albumin', 'Albumin points 1-3'], ['inr', 'INR/PT points 1-3'], ['ascites', 'Ascites points 1-3'], ['enceph', 'Encephalopathy points 1-3']],
+        calc: v => {
+          const score = v.bili + v.albumin + v.inr + v.ascites + v.enceph;
+          return [score, '', score <= 6 ? 'Class A' : score <= 9 ? 'Class B' : 'Class C', 'Use correct point categories. Acute liver failure and pregnancy need specialist interpretation.'];
+        }
+      },
+      {
+        id: 'hasbled',
+        name: 'HAS-BLED',
+        group: 'Cardiology',
+        fields: [['h', 'Hypertension 0/1'], ['a', 'Abnormal renal/liver 0-2'], ['s', 'Stroke 0/1'], ['b', 'Bleeding 0/1'], ['l', 'Labile INR 0/1'], ['e', 'Elderly 0/1'], ['d', 'Drugs/alcohol 0-2']],
+        calc: v => {
+          const score = v.h + v.a + v.s + v.b + v.l + v.e + v.d;
+          return [score, '', score >= 3 ? 'High bleeding risk flag' : 'Lower bleeding risk flag', 'Use to identify modifiable bleeding risks; not an automatic reason to withhold anticoagulation.'];
+        }
+      },
+      {
+        id: 'chadsvasc',
+        name: 'CHA2DS2-VASc',
+        group: 'Cardiology',
+        fields: [['chf', 'CHF 0/1'], ['htn', 'Hypertension 0/1'], ['age75', 'Age >=75 0/2'], ['dm', 'Diabetes 0/1'], ['stroke', 'Stroke/TIA 0/2'], ['vascular', 'Vascular 0/1'], ['age65', 'Age 65-74 0/1'], ['sexcat', 'Female sex 0/1']],
+        calc: v => {
+          const score = v.chf + v.htn + v.age75 + v.dm + v.stroke + v.vascular + v.age65 + v.sexcat;
+          return [score, '', score >= 2 ? 'Anticoagulation usually considered if AF confirmed' : 'Lower thromboembolic risk', 'Use with national cardiology guidance, bleeding risk, valvular disease, pregnancy, and renal function.'];
+        }
+      },
+      {
+        id: 'wellsDvt',
+        name: 'Wells DVT Score',
+        group: 'Vascular',
+        fields: [['cancer', 'Cancer 0/1'], ['paralysis', 'Paralysis/cast 0/1'], ['bed', 'Bedridden/surgery 0/1'], ['tender', 'Deep vein tenderness 0/1'], ['swollen', 'Entire leg swollen 0/1'], ['calf', 'Calf swelling 0/1'], ['pitting', 'Pitting oedema 0/1'], ['collateral', 'Collateral veins 0/1'], ['alternative', 'Alternative diagnosis as likely 0/-2']],
+        calc: v => {
+          const score = v.cancer + v.paralysis + v.bed + v.tender + v.swollen + v.calf + v.pitting + v.collateral + v.alternative;
+          return [score, '', score >= 2 ? 'DVT likely by two-level Wells' : 'DVT unlikely by two-level Wells', 'Pregnancy, inpatient status, and local ultrasound/D-dimer access affect pathway.'];
+        }
+      },
+      {
+        id: 'qtc',
+        name: 'QTc Bazett',
+        group: 'Cardiology',
+        fields: [['qt', 'QT interval ms'], ['rr', 'RR interval ms']],
+        calc: v => {
+          const qtc = v.qt / Math.sqrt(v.rr / 1000);
+          return [qtc, 'ms', qtc >= 500 ? 'High torsades risk threshold' : 'Interpret by sex, drugs, electrolytes', 'Bazett overcorrects at high HR. Check K, Mg, Ca and QT-prolonging medicines.'];
+        }
+      },
+      {
+        id: 'correctedPhenytoin',
+        name: 'Corrected Phenytoin',
+        group: 'Neurology',
+        fields: [['level', 'Measured phenytoin'], ['albumin', 'Albumin g/L']],
+        calc: v => {
+          const alb = v.albumin / 10;
+          const corrected = v.level / ((0.2 * alb) + 0.1);
+          return [corrected, '', 'Albumin-corrected estimate', 'Use local units/reference range. Renal failure and critical illness may require free phenytoin level.'];
+        }
+      },
+      {
+        id: 'etoh',
+        name: 'Ethanol Level Decay',
+        group: 'Toxicology',
+        fields: [['level', 'Current ethanol level'], ['rate', 'Clearance per hour'], ['hours', 'Hours elapsed']],
+        calc: v => [Math.max(v.level - v.rate * v.hours, 0), '', 'Estimated remaining level', 'Clearance varies widely; do not use alone for discharge, capacity, or airway risk decisions.']
+      },
+      {
+        id: 'insulinInfusion',
+        name: 'Insulin Infusion Rate',
+        group: 'Endocrine',
+        fields: [['weight', 'Weight (kg)'], ['unitskg', 'Units/kg/hour']],
+        calc: v => [v.weight * v.unitskg, 'units/hour', 'Protocol rate = weight x prescribed units/kg/hour', 'Use only with a local DKA/HHS/ICU protocol, potassium plan, glucose monitoring, and infusion pump.']
+      },
+      {
+        id: 'alvarado',
+        name: 'Alvarado Score for Appendicitis',
+        group: 'Surgical',
+        fields: [['migration', 'Migration to RLQ 0/1'], ['anorexia', 'Anorexia 0/1'], ['nausea', 'Nausea/vomiting 0/1'], ['rlqTender', 'RLQ tenderness 0/2'], ['rebound', 'Rebound tenderness 0/1'], ['temp', 'Temperature >37.3 C 0/1'], ['wbc', 'Leukocytosis 0/2'], ['leftShift', 'Neutrophil left shift 0/1']],
+        calc: v => {
+          const score = v.migration + v.anorexia + v.nausea + v.rlqTender + v.rebound + v.temp + v.wbc + v.leftShift;
+          return [score, '/10', score <= 4 ? 'Appendicitis less likely' : score <= 6 ? 'Compatible: observe/image/surgical review by setting' : 'Probable/high risk: urgent surgical review', 'Exact MANTRELS points: migration 1, anorexia 1, nausea/vomiting 1, RLQ tenderness 2, rebound 1, fever 1, leukocytosis 2, left shift 1. Pregnancy, elderly, HIV, and children need cautious interpretation.'];
+        }
+      },
+      {
+        id: 'gustilo',
+        name: 'Gustilo-Anderson Open Fracture Class',
+        group: 'Orthopaedic',
+        fields: [['gaWound', 'Wound/energy pattern'], ['gaCoverage', 'Soft tissue coverage'], ['gaVascular', 'Arterial injury requiring repair']],
+        calc: v => {
+          let grade = 'Type I';
+          let interp = 'Clean wound <1 cm, low energy, simple fracture pattern.';
+          if (v.gaVascular === 1) {
+            grade = 'Type IIIC';
+            interp = 'Any open fracture with arterial injury requiring repair, regardless of wound size.';
+          } else if (v.gaCoverage === 2) {
+            grade = 'Type IIIB';
+            interp = 'Extensive soft tissue loss, periosteal stripping/bone exposure, usually needs flap coverage.';
+          } else if (v.gaCoverage === 1 || v.gaWound === 3) {
+            grade = 'Type IIIA';
+            interp = 'High-energy/extensive injury with adequate soft tissue coverage after debridement.';
+          } else if (v.gaWound === 2) {
+            grade = 'Type II';
+            interp = 'Wound >1 cm without extensive soft tissue damage, flaps, avulsion, or high-energy contamination.';
+          }
+          return [grade, '', interp, 'Classification is ideally assigned after operative debridement. Give early antibiotics, tetanus care, splinting, neurovascular documentation, and urgent orthopaedic referral.'];
+        }
+      },
+      {
+        id: 'sinbad',
+        name: 'SINBAD Diabetic Foot Ulcer Score',
+        group: 'DFU',
+        fields: [['sinSite', 'Site: forefoot=0, mid/hindfoot=1'], ['sinIschemia', 'Ischaemia absent=0, present=1'], ['sinNeuropathy', 'Neuropathy absent=0, present=1'], ['sinInfection', 'Bacterial infection absent=0, present=1'], ['sinArea', 'Area <1 cm2=0, >=1 cm2=1'], ['sinDepth', 'Depth skin/subcutaneous=0, tendon/bone/joint=1']],
+        calc: v => {
+          const score = v.sinSite + v.sinIschemia + v.sinNeuropathy + v.sinInfection + v.sinArea + v.sinDepth;
+          return [score, '/6', score <= 2 ? 'Lower complexity DFU score' : score <= 4 ? 'Moderate complexity DFU score' : 'High complexity DFU score', 'Exact SINBAD variables are Site, Ischaemia, Neuropathy, Bacterial infection, Area, Depth; each scores 0 or 1. Use with vascular, infection, glycaemic, footwear, and wound-care assessment.'];
+        }
+      },
+      {
+        id: 'wagnerDfu',
+        name: 'Wagner Diabetic Foot Ulcer Grade',
+        group: 'DFU',
+        fields: [['wagnerGrade', 'Wagner grade']],
+        calc: v => {
+          const text = {
+            0: 'Grade 0: intact skin, high-risk foot/pre-ulcerative lesion.',
+            1: 'Grade 1: superficial ulcer.',
+            2: 'Grade 2: deep ulcer to tendon, bone, ligament, joint, or capsule.',
+            3: 'Grade 3: deep ulcer with abscess, osteomyelitis, or joint sepsis.',
+            4: 'Grade 4: localized forefoot gangrene.',
+            5: 'Grade 5: extensive whole-foot gangrene.'
+          }[v.wagnerGrade];
+          return ['Grade ' + v.wagnerGrade, '', text, 'Wagner grade describes depth/gangrene but does not fully grade infection or ischaemia; add vascular and infection classification.'];
+        }
+      },
+      {
+        id: 'utDfu',
+        name: 'University of Texas DFU Class',
+        group: 'DFU',
+        fields: [['utGrade', 'UT grade'], ['utInfection', 'Infection'], ['utIschemia', 'Ischaemia']],
+        calc: v => {
+          const stage = v.utInfection && v.utIschemia ? 'D' : v.utIschemia ? 'C' : v.utInfection ? 'B' : 'A';
+          const gradeText = {
+            0: 'Grade 0: pre- or post-ulcerative lesion, completely epithelialized.',
+            1: 'Grade 1: superficial wound, not involving tendon/capsule/bone.',
+            2: 'Grade 2: wound penetrating tendon or capsule.',
+            3: 'Grade 3: wound penetrating bone or joint.'
+          }[v.utGrade];
+          const stageText = {
+            A: 'Stage A: non-infected and non-ischaemic.',
+            B: 'Stage B: infected.',
+            C: 'Stage C: ischaemic.',
+            D: 'Stage D: infected and ischaemic.'
+          }[stage];
+          return ['Grade ' + v.utGrade + stage, '', gradeText + ' ' + stageText, 'University of Texas classification combines wound depth grade 0-3 with stage A-D for infection/ischaemia.'];
+        }
+      },
+      {
+        id: 'wellsPe',
+        name: 'Wells Score for PE',
+        group: 'Vascular',
+        fields: [['peDvtSigns', 'Clinical signs of DVT'], ['peLikely', 'PE more likely than alternative'], ['peHr', 'Heart rate >100'], ['peImmobil', 'Immobilisation/surgery <4 weeks'], ['pePrevious', 'Previous DVT/PE'], ['peHemoptysis', 'Haemoptysis'], ['peCancer', 'Active cancer']],
+        calc: v => {
+          const score = v.peDvtSigns * 3 + v.peLikely * 3 + v.peHr * 1.5 + v.peImmobil * 1.5 + v.pePrevious * 1.5 + v.peHemoptysis + v.peCancer;
+          return [score, '', score > 4 ? 'PE likely by two-level Wells' : 'PE unlikely by two-level Wells', 'Exact Wells PE points: DVT signs 3, PE most likely 3, HR>100 1.5, immobilisation/surgery 1.5, previous VTE 1.5, haemoptysis 1, cancer 1. Use with local D-dimer/imaging pathway.'];
+        }
+      },
+      {
+        id: 'perc',
+        name: 'PERC Rule',
+        group: 'Vascular',
+        fields: [['percAge', 'Age >=50'], ['percHr', 'Heart rate >=100'], ['percSat', 'SpO2 <95%'], ['percHemoptysis', 'Haemoptysis'], ['percEstrogen', 'Estrogen use'], ['percSurgery', 'Surgery/trauma needing admission <4 weeks'], ['percVte', 'Prior VTE'], ['percLeg', 'Unilateral leg swelling']],
+        calc: v => {
+          const score = v.percAge + v.percHr + v.percSat + v.percHemoptysis + v.percEstrogen + v.percSurgery + v.percVte + v.percLeg;
+          return [score, '/8', score === 0 ? 'PERC negative if clinician gestalt is low risk' : 'PERC positive', 'PERC is only for low pre-test probability patients. Any positive criterion means PE cannot be excluded by PERC alone.'];
+        }
+      },
+      {
+        id: 'heart',
+        name: 'HEART Score for Chest Pain',
+        group: 'Cardiology',
+        fields: [['heartHistory', 'History points'], ['heartEcg', 'ECG points'], ['heartAge', 'Age points'], ['heartRisk', 'Risk factor points'], ['heartTroponin', 'Troponin points']],
+        calc: v => {
+          const score = v.heartHistory + v.heartEcg + v.heartAge + v.heartRisk + v.heartTroponin;
+          return [score, '/10', score <= 3 ? 'Low risk group' : score <= 6 ? 'Moderate risk group' : 'High risk group', 'HEART uses 0-2 points each for History, ECG, Age, Risk factors, Troponin. Use only with ECG/troponin pathway and local ACS protocol.'];
+        }
+      },
+      {
+        id: 'curb65',
+        name: 'CURB-65 Pneumonia Severity',
+        group: 'Respiratory',
+        fields: [['curbConfusion', 'Confusion'], ['curbUrea', 'Urea >7 mmol/L'], ['curbRr', 'RR >=30'], ['curbBp', 'SBP <90 or DBP <=60'], ['curbAge', 'Age >=65']],
+        calc: v => {
+          const score = v.curbConfusion + v.curbUrea + v.curbRr + v.curbBp + v.curbAge;
+          return [score, '/5', score <= 1 ? 'Low severity by CURB-65' : score === 2 ? 'Moderate severity' : 'High severity', 'Exact CURB-65: confusion, urea >7 mmol/L, RR >=30/min, low BP, age >=65; 1 point each. Does not replace SpO2, sepsis, pregnancy, HIV/TB, or clinical judgement.'];
+        }
+      },
+      {
+        id: 'gbs',
+        name: 'Glasgow-Blatchford UGIB Score',
+        group: 'Gastroenterology',
+        fields: [['urea', 'Urea mmol/L'], ['hb', 'Haemoglobin g/L'], ['sex', 'Sex: male=1, female=0'], ['sbp', 'Systolic BP'], ['pulse100', 'Pulse >=100'], ['melena', 'Melaena'], ['syncope', 'Syncope'], ['hepatic', 'Hepatic disease'], ['cardiac', 'Cardiac failure']],
+        calc: v => {
+          let score = 0;
+          if (v.urea >= 25) score += 6; else if (v.urea >= 10) score += 4; else if (v.urea >= 8) score += 3; else if (v.urea >= 6.5) score += 2;
+          if (v.sex === 1) { if (v.hb < 100) score += 6; else if (v.hb < 120) score += 3; else if (v.hb < 130) score += 1; }
+          else { if (v.hb < 100) score += 6; else if (v.hb < 120) score += 1; }
+          if (v.sbp < 90) score += 3; else if (v.sbp < 100) score += 2; else if (v.sbp < 110) score += 1;
+          score += v.pulse100 + v.melena + (v.syncope * 2) + (v.hepatic * 2) + (v.cardiac * 2);
+          return [score, '', score === 0 ? 'Very low risk in validated settings' : score <= 5 ? 'Needs clinical risk assessment' : 'High risk for intervention/transfusion/endoscopy', 'Exact GBS components: urea, Hb by sex, SBP, pulse, melaena, syncope, hepatic disease, cardiac failure. Use with UGIB resuscitation/endoscopy pathway.'];
+        }
+      },
+      {
+        id: 'bishop',
+        name: 'Bishop Score',
+        group: 'Obstetric',
+        fields: [['bishopDilation', 'Cervical dilation'], ['bishopEffacement', 'Effacement'], ['bishopStation', 'Station'], ['bishopConsistency', 'Consistency'], ['bishopPosition', 'Position']],
+        calc: v => {
+          const score = v.bishopDilation + v.bishopEffacement + v.bishopStation + v.bishopConsistency + v.bishopPosition;
+          return [score, '/13', score >= 8 ? 'Favourable cervix in common interpretation' : 'Unfavourable/intermediate cervix', 'Traditional Bishop score: dilation, effacement, station scored 0-3; consistency and position scored 0-2. Do not use alone to deny indicated induction.'];
+        }
+      },
+      {
+        id: 'meldNa',
+        name: 'MELD-Na',
+        group: 'Gastroenterology',
+        fields: [['bilirubin', 'Bilirubin mg/dL'], ['inr', 'INR'], ['creatinineMg', 'Creatinine mg/dL'], ['sodium', 'Sodium mmol/L'], ['dialysis', 'Dialysis twice in last week: yes=1 no=0']],
+        calc: v => {
+          const bili = Math.max(v.bilirubin, 1);
+          const inr = Math.max(v.inr, 1);
+          const cr = v.dialysis ? 4 : Math.min(Math.max(v.creatinineMg, 1), 4);
+          let meld = 9.57 * Math.log(cr) + 3.78 * Math.log(bili) + 11.2 * Math.log(inr) + 6.43;
+          meld = Math.max(meld, 6);
+          const na = Math.min(Math.max(v.sodium, 125), 137);
+          const meldNa = meld + 1.32 * (137 - na) - 0.033 * meld * (137 - na);
+          return [meldNa, '', 'MELD-Na severity score', 'Formula uses bilirubin, INR, creatinine capped 1-4 mg/dL, sodium bounded 125-137 mmol/L, and dialysis rule. Verify units before use.'];
+        }
+      },
+      {
+        id: 'sirs',
+        name: 'SIRS Criteria',
+        group: 'Resus',
+        fields: [['sirsTemp', 'Temp >38 or <36'], ['sirsHr', 'HR >90'], ['sirsRr', 'RR >20 or PaCO2 <32'], ['sirsWbc', 'WBC >12/<4 or bands >10%']],
+        calc: v => {
+          const score = v.sirsTemp + v.sirsHr + v.sirsRr + v.sirsWbc;
+          return [score, '/4', score >= 2 ? 'SIRS positive' : 'SIRS negative', 'SIRS is nonspecific and does not replace sepsis recognition, organ dysfunction assessment, or local emergency care guidance.'];
+        }
+      }
+    ];
+
+    const additionalProtocols = [
+      {
+        title: 'Pulmonary Embolism / DVT',
+        category: 'Vascular',
+        urgency: 'red',
+        keywords: 'pulmonary embolism pe dvt venous thromboembolism chest pain dyspnoea hypoxia swollen leg anticoagulation',
+        steps: [
+          'ABCDE first. Give oxygen for hypoxia, establish IV access, ECG, SpO2, BP, pulse, respiratory rate, and assess shock.',
+          'Look for PE: sudden dyspnoea, pleuritic chest pain, haemoptysis, syncope, hypoxia, tachycardia, unilateral leg swelling, pregnancy/postpartum, cancer, surgery/immobility, previous VTE.',
+          'Use Wells PE or Wells DVT score from calculators to structure pre-test probability, but do not delay resuscitation in unstable suspected PE.',
+          'If haemodynamically unstable with high suspicion, urgent senior review, bedside echo/imaging if available, and transfer/thrombolysis pathway according to facility level.',
+          'If stable, follow diagnostic pathway available at level: D-dimer only for low/intermediate risk where validated, compression ultrasound for DVT, CT pulmonary angiography/referral where available.'
+        ],
+        danger: 'Shock, syncope, severe hypoxia, pregnancy/postpartum, active cancer, massive haemoptysis, or contraindication to anticoagulation needs urgent senior/specialist input.',
+        source: ['tz', 'whoEct', 'bec']
+      },
+      {
+        title: 'Ectopic Pregnancy',
+        category: 'Obstetric',
+        urgency: 'red',
+        keywords: 'ectopic pregnancy abdominal pain bleeding shock ruptured tubal pregnancy early pregnancy',
+        steps: [
+          'In any reproductive-age patient with abdominal pain, syncope, shoulder-tip pain, vaginal bleeding, shock, or missed period, check pregnancy status urgently.',
+          'ABCDE, two IV lines if unstable, blood group/crossmatch where available, fluids/blood pathway, analgesia, and urgent obstetric/surgical call.',
+          'Do not wait for ultrasound if shocked and pregnancy test is positive or strongly suspected; treat as ruptured ectopic until proven otherwise.',
+          'If stable, arrange pelvic ultrasound and serial beta-hCG pathway where available; assess differential including miscarriage, PID, ovarian torsion, appendicitis, UTI.',
+          'Transfer early if theatre, blood, ultrasound, or obstetric surgery is unavailable.'
+        ],
+        danger: 'A negative history of amenorrhoea does not exclude ectopic pregnancy. Shock in early pregnancy is ruptured ectopic until proven otherwise.',
+        source: ['tz', 'obstetric', 'bec']
+      },
+      {
+        title: 'Acute Appendicitis',
+        category: 'Surgical',
+        urgency: 'amber',
+        keywords: 'appendicitis alvarado right iliac fossa pain rlq surgical abdomen perforation',
+        steps: [
+          'Assess migration of pain, anorexia, nausea/vomiting, RLQ tenderness, rebound/peritonism, fever, pregnancy status, urinary/gynaecologic symptoms, and sepsis.',
+          'Use Alvarado score as a structured support tool, not a replacement for surgical review.',
+          'Keep nil by mouth if likely surgery, give analgesia, antiemetic, IV fluids if dehydrated, and antibiotics when complicated appendicitis/peritonitis/sepsis is suspected.',
+          'Request ultrasound/CT/labs according to facility level and patient group; avoid delaying referral when peritonitis or sepsis is present.',
+          'Children, pregnancy, elderly, HIV/immunosuppression, and atypical presentations need lower threshold for senior review.'
+        ],
+        danger: 'Generalized peritonitis, sepsis, pregnancy, mass/abscess, persistent vomiting, or diagnostic uncertainty with deterioration requires urgent surgical pathway.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Diabetic Foot Infection / Ulcer',
+        category: 'DFU',
+        urgency: 'amber',
+        keywords: 'diabetic foot ulcer dfu infection gangrene osteomyelitis neuropathy ischemia wagner sinbad university texas',
+        steps: [
+          'Assess ulcer depth, infection, ischaemia, neuropathy, systemic toxicity, glucose control, renal function, footwear/pressure, and ability to offload.',
+          'Use SINBAD, Wagner, or University of Texas DFU classification from calculators to document severity consistently.',
+          'Look for limb-threatening features: spreading cellulitis, abscess, necrosis/gangrene, crepitus, exposed bone, severe pain despite neuropathy, fever/sepsis, absent pulses.',
+          'Start antibiotics for clinically infected ulcers according to severity and STG; do not give antibiotics for an uninfected ulcer.',
+          'Arrange debridement/source control, offloading, glycaemic management, vascular assessment, tetanus care if wound, and referral for ischaemia, deep infection, or gangrene.'
+        ],
+        danger: 'Infection plus ischaemia, gangrene, sepsis, gas/crepitus, deep abscess, or suspected necrotizing infection needs urgent surgical/vascular referral.',
+        source: ['tz', 'whoEct']
+      },
+      {
+        title: 'Hyperkalaemia',
+        category: 'Renal',
+        urgency: 'red',
+        keywords: 'hyperkalemia hyperkalaemia potassium ecg renal failure calcium insulin salbutamol dialysis',
+        steps: [
+          'Suspect in AKI/CKD, anuria, weakness/paralysis, arrhythmia, crush injury, DKA, acidosis, potassium-sparing drugs, ACEi/ARB, missed dialysis.',
+          'Place on monitor if possible, obtain ECG, repeat potassium if spurious sample suspected, and assess renal function, glucose, acidosis, and urine output.',
+          'If ECG changes, severe potassium elevation, arrhythmia, or high clinical suspicion with instability, give IV calcium immediately while arranging potassium-shifting therapy.',
+          'Shift potassium intracellularly with insulin/glucose and nebulized salbutamol where appropriate; remove potassium with diuretics/resins/dialysis depending on setting.',
+          'Stop potassium sources and culprit drugs; arrange urgent dialysis/referral for refractory hyperkalaemia, severe renal failure, pulmonary oedema, or anuria.'
+        ],
+        danger: 'Do not wait for repeat labs when ECG changes or malignant arrhythmia suggests hyperkalaemia. Calcium stabilizes myocardium but does not remove potassium.',
+        source: ['tz', 'bec']
+      },
+      {
+        title: 'Convulsion / First Seizure',
+        category: 'Medical',
+        urgency: 'red',
+        keywords: 'convulsion seizure fit epilepsy febrile seizure hypoglycaemia eclampsia meningitis malaria poisoning',
+        steps: [
+          'Protect the patient from injury, position laterally when possible, loosen tight clothing, suction only if needed, and do not put anything in the mouth.',
+          'Check airway, breathing, circulation, temperature, oxygen saturation, and bedside glucose immediately.',
+          'If convulsion lasts 5 minutes or more, recurs without recovery, or cause is high risk, treat as status epilepticus and escalate.',
+          'Look for reversible causes: hypoglycaemia, eclampsia, meningitis/encephalitis, severe malaria, head injury, poisoning, alcohol withdrawal, electrolyte disorder, fever in children.',
+          'After recovery, document duration, focal features, pregnancy/postpartum status, fever/neck stiffness, trauma, medications, and neurological deficit.'
+        ],
+        danger: 'Pregnancy/postpartum convulsion is eclampsia until proven otherwise. Persistent convulsion, hypoxia, low glucose, meningism, trauma, or focal deficit needs urgent referral/senior review.',
+        source: ['tz', 'bec', 'mhgap', 'paeds']
+      },
+      {
+        title: 'Dehydration: Adult and Child',
+        category: 'Infectious',
+        urgency: 'amber',
+        keywords: 'dehydration diarrhoea vomiting cholera ors plan a plan b plan c ringer lactate shock child adult',
+        steps: [
+          'Classify severity using mental status, thirst/ability to drink, eyes, mucosa, skin pinch, pulse, capillary refill, BP, urine output, and weight change if known.',
+          'No dehydration: continue feeding/breastfeeding, give extra fluids/ORS after each stool, and teach danger signs.',
+          'Some dehydration: give ORS under observation over about 4 hours, reassess, replace ongoing losses, and continue zinc for children with diarrhoea.',
+          'Severe dehydration or shock: start IV Ringer lactate or normal saline urgently, reassess pulse/perfusion/mental status frequently, and switch to ORS as soon as able.',
+          'Look for special risks: severe malnutrition, severe anaemia, DKA, renal/cardiac disease, pregnancy, cholera outbreak, persistent vomiting, blood in stool, or altered consciousness.'
+        ],
+        danger: 'Lethargy, inability to drink, shock, anuria, severe malnutrition, infant age, pregnancy, cholera, or persistent vomiting requires urgent monitored care or transfer.',
+        source: ['tz', 'paeds', 'whoEct']
+      },
+      {
+        title: 'Hyperemesis Gravidarum',
+        category: 'Obstetric',
+        urgency: 'amber',
+        keywords: 'hyperemesis gravidarum vomiting pregnancy dehydration ketones electrolyte thiamine antiemetic',
+        steps: [
+          'Assess gestational age, severity of vomiting, oral intake, weight loss, dehydration, urine output, abdominal pain, fever, headache, visual symptoms, vaginal bleeding, and multiple pregnancy risk.',
+          'Exclude differentials: UTI/pyelonephritis, malaria, gastroenteritis, hepatitis, pancreatitis, DKA, thyroid disease, pre-eclampsia after 20 weeks, surgical abdomen.',
+          'Check urine ketones where available, glucose, electrolytes/creatinine, full blood count, malaria test, urinalysis, and ultrasound if molar/multiple pregnancy suspected.',
+          'Give IV fluids for dehydration, correct electrolytes, give thiamine before dextrose in prolonged vomiting/malnutrition risk, then antiemetics according to pregnancy safety and local protocol.',
+          'Admit or refer if unable to keep fluids down, dehydration/electrolyte abnormality, weight loss, ketonuria with illness, comorbidity, severe abdominal pain, or failed outpatient therapy.'
+        ],
+        danger: 'Avoid dextrose before thiamine in prolonged vomiting because of Wernicke risk. Severe abdominal pain, fever, jaundice, neurological signs, or late-pregnancy hypertension needs urgent senior review.',
+        source: ['tz', 'obstetric']
+      }
+    ];
+
+    const state = { category: 'All', calcGroup: 'All', activeCalc: calculators[0].id, level: 'district' };
+    const $ = sel => document.querySelector(sel);
+    const allProtocols = () => protocols.concat(facilityLevels.extraProtocols || [], additionalProtocols);
+    const calculatorCutoffs = {
+      bmi: ['<18.5 underweight', '18.5-24.9 usual adult reference range', '25.0-29.9 overweight', '>=30 obesity range; interpret cautiously in pregnancy, oedema, ascites, amputation, and athletes'],
+      bsa: ['No disease cutoff; use the calculated BSA only where a medicine/protocol specifically doses by m2', 'Confirm the protocol formula if oncology, burns, or paediatric dosing requires a specific method'],
+      crcl: ['>=60 mL/min: many adult renal dose adjustments not required, drug dependent', '30-59: reduced renal function; check renal dosing', '<30: severe reduction for many medicines', '<15 or dialysis: specialist/local renal dosing pathway'],
+      egfr: ['>=90 with kidney damage marker: CKD G1', '60-89: G2', '45-59: G3a', '30-44: G3b', '15-29: G4', '<15: G5 kidney failure range; not for AKI'],
+      map: ['MAP <65 mmHg suggests inadequate perfusion in many shock protocols', 'MAP >=65 is a common initial adult sepsis/shock target, but pregnancy, head injury, chronic hypertension, and children need different targets'],
+      shock: ['Shock index <0.7 often reassuring in adults', '0.7-0.9 borderline/context dependent', '>=0.9 concerning for shock, bleeding, sepsis, PE, or dehydration', 'Pregnancy and beta-blockers change interpretation'],
+      gcs: ['13-15 mild impairment or normal range', '9-12 moderate brain injury/impairment range', '<=8 severe impairment and airway risk', 'Always document E, V, and M components'],
+      qsofa: ['0-1: does not rule out sepsis', '>=2: higher risk of poor outcome in suspected infection; escalate and assess organ dysfunction'],
+      parkland: ['Formula gives first 24 h burn-fluid estimate only', 'Half in first 8 h from time of burn, half over next 16 h', 'Titrate to urine output/perfusion; exclude simple erythema from TBSA'],
+      maintenance: ['100 mL/kg/day for first 10 kg', '50 mL/kg/day for next 10 kg', '20 mL/kg/day for each kg above 20 kg', 'Adjust for illness, electrolytes, renal/cardiac disease, fever, and dehydration plan'],
+      drops: ['Drops/min = volume x drop factor / minutes', 'No clinical cutoff; use pump for insulin, magnesium, vasoactive drugs, paediatrics, blood, and high-risk infusions'],
+      anion: ['Common adult reference: 8-12 mmol/L without potassium, lab dependent', '>12 often elevated anion gap; correct for low albumin when relevant'],
+      correctedNa: ['Use to reveal true tonicity in hyperglycaemia', 'No single treatment cutoff; interpret with measured sodium, osmolality, glucose trajectory, and DKA/HHS protocol'],
+      calcium: ['Common corrected calcium: low <2.1 mmol/L, high >2.6 mmol/L, lab dependent', 'Use ionized calcium in critical illness, massive transfusion, hypoalbuminaemia, or acid-base disturbance'],
+      edd: ['Estimated due date = LMP + 280 days', 'No cutoff; reconcile with ultrasound dating and clinical context'],
+      gestAge: ['Preterm <37w0d', 'Early term 37w0d-38w6d', 'Full term 39w0d-40w6d', 'Late term 41w0d-41w6d', 'Post-term >=42w0d'],
+      obShock: ['Obstetric shock index <0.9 often lower concern', '0.9-1.0 concerning; reassess bleeding/sepsis', '>=1.0 high concern for obstetric haemorrhage/sepsis'],
+      apgar: ['7-10 generally reassuring', '4-6 moderately low', '0-3 severely low', 'Do not delay resuscitation to calculate APGAR'],
+      pedsBolus: ['Common bolus range 10-20 mL/kg depending on condition', 'Use caution or specialist protocol in severe malnutrition, DKA, cardiac/renal disease, severe anaemia, or respiratory distress'],
+      transfusionVol: ['Common paediatric RBC volume 10-15 mL/kg, protocol dependent', 'Use lower/slower volumes in cardiac failure or severe chronic anaemia; monitor for transfusion reaction'],
+      oxygenation: ['SpO2/FiO2 <315 approximates PaO2/FiO2 <300', '<235 approximates moderate oxygenation impairment', '<150 approximates severe impairment; validate with ABG when possible'],
+      pfRatio: ['>300: above ARDS oxygenation threshold', '200-300 mild ARDS range', '100-200 moderate ARDS range', '<100 severe ARDS range, if ARDS criteria met'],
+      serumOsm: ['Typical calculated serum osmolality about 275-295 mOsm/kg', 'High values occur in dehydration, hypernatraemia, HHS, renal failure, toxins; compare with measured value if available'],
+      osmGap: ['<=10 mOsm/kg often normal by common threshold', '>10 raised osmolar gap; consider toxic alcohols, ethanol, mannitol, ketoacidosis, renal failure'],
+      freeWater: ['No universal treatment cutoff', 'Correct chronic hypernatraemia slowly; account for ongoing losses and use local sodium correction limits'],
+      childPugh: ['5-6 Class A', '7-9 Class B', '10-15 Class C', 'Use with cirrhosis context; not an acute liver failure score'],
+      hasbled: ['0-2 lower bleeding risk', '>=3 high bleeding risk flag', 'Use to correct modifiable risks, not automatically withhold anticoagulation'],
+      chadsvasc: ['Men 0 or women 1: low risk in many AF pathways', 'Men 1 or women 2: consider anticoagulation based on guideline/context', 'Men >=2 or women >=3: anticoagulation usually recommended if AF confirmed and no contraindication'],
+      wellsDvt: ['<2: DVT unlikely by two-level Wells', '>=2: DVT likely; ultrasound/D-dimer pathway depends on setting'],
+      qtc: ['QTc >=450 ms in men or >=470 ms in women often prolonged', '>=500 ms high torsades risk threshold', 'Bazett overcorrects at high heart rate'],
+      correctedPhenytoin: ['Therapeutic total phenytoin often 10-20 microgram/mL, unit dependent', 'Use free phenytoin level where available in renal failure, hypoalbuminaemia, pregnancy, or critical illness'],
+      etoh: ['No safe discharge cutoff from calculation alone', 'Interpret with airway, glucose, trauma, co-ingestion, mental status, capacity, and local legal/clinical policy'],
+      insulinInfusion: ['Common DKA infusion 0.1 units/kg/hour after potassium/fluid plan', 'Lower rates may be used by specific HHS/paediatric protocols; monitor glucose and potassium closely'],
+      alvarado: ['0-4 appendicitis less likely', '5-6 compatible/equivocal; observe, image, or surgical review by setting', '7-10 probable/high risk; urgent surgical review'],
+      gustilo: ['Type I: clean <1 cm low energy', 'Type II: >1 cm without extensive soft tissue damage', 'Type IIIA: high-energy/extensive but adequate coverage', 'Type IIIB: bone exposure/periosteal stripping/flap needed', 'Type IIIC: arterial injury requiring repair'],
+      sinbad: ['0-2 lower complexity', '3-4 moderate complexity', '5-6 high complexity', 'Each SINBAD variable scores 0 or 1'],
+      wagnerDfu: ['0 intact/pre-ulcer', '1 superficial ulcer', '2 deep ulcer to tendon/bone/joint/capsule', '3 abscess/osteomyelitis/joint sepsis', '4 localized forefoot gangrene', '5 whole-foot gangrene'],
+      utDfu: ['Grade 0-3 describes depth', 'Stage A non-infected/non-ischaemic', 'Stage B infected', 'Stage C ischaemic', 'Stage D infected and ischaemic'],
+      wellsPe: ['<=4 PE unlikely by two-level Wells', '>4 PE likely by two-level Wells', 'Unstable suspected PE bypasses score-driven delay'],
+      perc: ['0/8 PERC negative only if clinician pre-test probability is low', 'Any positive criterion means PE cannot be excluded by PERC alone'],
+      heart: ['0-3 low risk group', '4-6 moderate risk group', '7-10 high risk group', 'Use with ECG/troponin pathway'],
+      curb65: ['0-1 low severity', '2 moderate severity', '3-5 high severity; consider admission/escalation depending on setting'],
+      gbs: ['0 very low risk in validated settings', '1-5 increasing need for clinical/endoscopy assessment', '>=6 high risk for intervention/transfusion/endoscopy'],
+      bishop: ['<=5 usually unfavourable cervix', '6-7 intermediate', '>=8 favourable cervix in common interpretation'],
+      meldNa: ['<10 lower short-term liver mortality group', '10-19 moderate', '20-29 high', '>=30 very high; transplant/specialist urgency context dependent'],
+      sirs: ['0-1 SIRS negative', '>=2 SIRS positive', 'SIRS is nonspecific; sepsis requires suspected infection plus organ dysfunction/risk assessment']
+    };
+    const medicationGuides = {
+      'Pulmonary Embolism / DVT': [
+        'Anticoagulation for likely/confirmed VTE if no contraindication: use local protocol. Common options include enoxaparin 1 mg/kg SC 12-hourly, unfractionated heparin IV where monitoring is available, or DOAC/warfarin pathways where appropriate.',
+        'Massive PE with shock: urgent senior decision for thrombolysis pathway where available; alteplase dosing must follow local protocol and contraindication checklist.',
+        'Pregnancy/postpartum, renal failure, active bleeding, severe thrombocytopenia, recent surgery, and suspected stroke require specialist anticoagulation choice.'
+      ],
+      'Ectopic Pregnancy': [
+        'Unstable suspected ruptured ectopic: resuscitate with warmed crystalloid while activating blood/theatre/transfer pathway; do not delay definitive surgery for prolonged tests.',
+        'Analgesia: paracetamol 1 g adult; titrated opioid if severe pain and monitored.',
+        'Anti-D immunoglobulin for Rh-negative patients where indicated by national obstetric protocol.',
+        'Methotrexate is only for carefully selected stable patients under specialist ectopic protocol with reliable follow-up.'
+      ],
+      'Acute Appendicitis': [
+        'Analgesia: paracetamol 1 g adult or 15 mg/kg child; morphine 0.05-0.1 mg/kg IV titrated if severe pain and monitoring available.',
+        'Antibiotics when complicated/perforated/septic or peri-operative per protocol: ceftriaxone plus metronidazole is a common regimen; adult metronidazole 500 mg IV 8-hourly. Verify local STG/surgical policy.',
+        'Antiemetic: metoclopramide adult 10 mg PO/IV/IM where appropriate; avoid masking deterioration with discharge analgesia alone.'
+      ],
+      'Diabetic Foot Infection / Ulcer': [
+        'Uninfected ulcer: no antibiotics; prioritize offloading, wound care, glycaemic control, vascular assessment, and follow-up.',
+        'Mild infection: oral antibiotic covering gram-positive organisms per Tanzania STG/local antibiogram; adjust for allergy, renal function, MRSA risk, and pregnancy.',
+        'Moderate/severe infection, systemic toxicity, deep abscess, gangrene, or osteomyelitis suspicion: IV broad-spectrum antibiotics plus urgent surgical source control. Common severe interim regimen may include ceftriaxone plus metronidazole, tailored locally.',
+        'Tetanus prophylaxis if wound status/immunisation requires.'
+      ],
+      'Hyperkalaemia': [
+        'Cardiac membrane stabilization: calcium gluconate 10%, adult 10 mL IV over 5-10 min with ECG monitoring; repeat if ECG changes persist. Child: 0.5 mL/kg max 10 mL.',
+        'Shift potassium: regular insulin adult 10 units IV plus 25 g glucose; child 0.1 units/kg insulin with glucose per paediatric protocol. Check glucose repeatedly.',
+        'Nebulized salbutamol adjunct: adult 10-20 mg nebulized; child 2.5-5 mg depending on size/protocol. Not a substitute for calcium when ECG changes are present.',
+        'Sodium bicarbonate may help when severe metabolic acidosis is present; dialysis is definitive for refractory/life-threatening hyperkalaemia in renal failure.'
+      ],
+      'Convulsion / First Seizure': [
+        'If still convulsing at 5 minutes or recurrent without recovery: give benzodiazepine. Diazepam adult 10 mg rectal, repeat once after 10 min if needed; child 0.5 mg/kg rectal, repeat half-dose once. Monitor breathing.',
+        'Alternative where available/trained: midazolam 0.2 mg/kg buccal/IM max 10 mg, or lorazepam 0.1 mg/kg IV max 4 mg.',
+        'Check glucose immediately. Adult hypoglycaemia: 25 g IV glucose. Child: D10 5 mL/kg IV/IO. Neonate: D10 2 mL/kg.',
+        'Pregnancy/postpartum: give magnesium sulfate eclampsia regimen and treat severe hypertension per obstetric protocol.'
+      ],
+      'Dehydration: Adult and Child': [
+        'ORS for some dehydration: children generally 75 mL/kg over about 4 hours, then reassess and replace ongoing losses. Continue breastfeeding/feeding.',
+        'Severe dehydration: IV Ringer lactate preferred, or normal saline. Children use WHO Plan C age schedule; adults give rapid IV fluids guided by pulse, BP, mental status, urine output, and comorbidity.',
+        'Zinc for diarrhoea in children: 10 mg daily if under 6 months; 20 mg daily if 6 months or older for 10-14 days.',
+        'Cholera/severe watery diarrhoea: antibiotics only when indicated by national outbreak guidance; correct hypoglycaemia/electrolytes where available.'
+      ],
+      'Hyperemesis Gravidarum': [
+        'IV fluids: normal saline or Ringer lactate; add potassium only after renal/urine status and electrolyte review. Avoid dextrose until thiamine is given in prolonged vomiting/malnutrition risk.',
+        'Thiamine: give before dextrose in prolonged vomiting, poor intake, weight loss, or neurological risk; use local dose/formulation protocol.',
+        'Antiemetics commonly used in pregnancy protocols: metoclopramide 10 mg PO/IV/IM up to 8-hourly, promethazine 12.5-25 mg PO/IM, or ondansetron where local policy allows. Confirm trimester, contraindications, QT risk, and hospital guideline.',
+        'Treat associated causes: malaria, UTI, electrolyte abnormality, gastritis, or thyroid/molar pregnancy pathway when suspected.'
+      ],
+      'ABCDE First 10 Minutes': [
+        'Oxygen: give immediately for hypoxia, shock, severe respiratory distress, major trauma, seizure, poisoning, or altered consciousness; titrate to clinical target once stable.',
+        'Dextrose for hypoglycaemia: adult 25 g IV glucose, commonly 50 mL of D50 or equivalent; child use D10 5 mL/kg IV/IO where available. Recheck glucose and feed/infuse to prevent recurrence.',
+        'Naloxone when opioid toxicity with respiratory depression: adult 0.4 mg IV/IM/IN, repeat/titrate to ventilation; child 0.01 mg/kg. Support ventilation first.'
+      ],
+      'Cardiac Arrest: BLS/ALS Flow': [
+        'Adrenaline: adult 1 mg IV/IO every 3-5 min during CPR per ALS rhythm pathway. Paediatric: 0.01 mg/kg IV/IO of 1:10,000 solution.',
+        'Amiodarone for refractory VF/pulseless VT where protocol allows: adult 300 mg IV/IO after repeated shocks, then 150 mg. Paediatric: 5 mg/kg IV/IO.',
+        'Dextrose, calcium, sodium bicarbonate, magnesium, or naloxone only for specific reversible causes; do not interrupt CPR.'
+      ],
+      'Anaphylaxis': [
+        'Adrenaline 1 mg/mL (1:1000) IM anterolateral thigh: adult 0.5 mg if about 50 kg or above; 0.4 mg if about 40 kg; 0.3 mg if about 30 kg. Repeat every 5 min if needed.',
+        'Children: adrenaline 0.01 mg/kg IM; common emergency dose 0.15 mg for small children, max 0.3 mg unless local protocol states otherwise. Repeat every 5 min if ongoing compromise.',
+        'Salbutamol for bronchospasm: adult 5 mg nebulized; child 2.5 mg nebulized, repeat/continuous if severe. Give after adrenaline, not instead of it.',
+        'IV crystalloid for shock: adult 500-1000 mL boluses reassessed; child 10-20 mL/kg reassessed. Add antihistamine/steroid only after adrenaline and resuscitation are underway.'
+      ],
+      'Sepsis and Septic Shock': [
+        'Give first-dose broad-spectrum antibiotic within 1 hour for shock/high-risk sepsis, using Tanzania STG/local antibiogram. Common adult emergency option where appropriate: ceftriaxone 2 g IV daily; meningitis/severe sepsis may require different dosing.',
+        'Fluids for shock: adult balanced crystalloid/normal saline 500-1000 mL boluses with reassessment; child 10-20 mL/kg boluses, more cautiously in malnutrition, severe anaemia, renal/cardiac disease.',
+        'Check and treat glucose: adult 25 g IV dextrose if low; child D10 5 mL/kg IV/IO. Add malaria treatment when severe malaria criteria are present.'
+      ],
+      'Major Trauma': [
+        'Tranexamic acid for major traumatic bleeding within 3 hours: adult 1 g IV over 10 min, then 1 g over 8 h where infusion possible. Avoid late use beyond 3 h unless local protocol says otherwise.',
+        'Analgesia: paracetamol adult 1 g PO/IV; morphine 0.05-0.1 mg/kg IV titrated if trained and monitoring available; use lower doses in shock/elderly.',
+        'Open wounds/fractures: give tetanus prophylaxis and early antibiotics per STG; cefazolin/ceftriaxone options depend on local stock and contamination pattern.'
+      ],
+      'Burns': [
+        'Analgesia: paracetamol adult 1 g; morphine 0.05-0.1 mg/kg IV titrated for severe burns with monitoring.',
+        'Fluids for major burns: Parkland estimate 4 mL x kg x %TBSA crystalloid in first 24 h; half in first 8 h from burn time, titrate to urine output and perfusion.',
+        'Tetanus prophylaxis per immunisation status. Antibiotics are not routine for clean acute burns; use for infection, open contaminated injury, or peri-operative indications.'
+      ],
+      'Acute Severe Asthma/COPD': [
+        'Salbutamol: adult 5 mg nebulized or 4-10 puffs by spacer repeated; child 2.5 mg nebulized or spacer doses by age/weight, repeat frequently in severe attack.',
+        'Ipratropium for severe attack: adult 0.5 mg nebulized; child 0.25 mg nebulized, repeat with initial salbutamol doses where available.',
+        'Steroid early: adult prednisolone 40-50 mg PO or hydrocortisone 100 mg IV; child prednisolone 1-2 mg/kg PO (max 40 mg) or hydrocortisone 4 mg/kg IV.',
+        'Magnesium sulfate for life-threatening asthma where available: adult 2 g IV over 20 min; child 25-50 mg/kg IV max 2 g. Monitor BP and reflexes.'
+      ],
+      'Hypoglycaemia and Altered Consciousness': [
+        'Adult: 25 g IV glucose, commonly 50 mL D50 or equivalent. Flush line and recheck glucose after 10-15 min.',
+        'Child: D10 5 mL/kg IV/IO. Neonate: D10 2 mL/kg IV, then maintenance glucose infusion if needed.',
+        'If no IV: glucagon 1 mg IM/SC adult or child above 25 kg; 0.5 mg if smaller child where available. Give oral carbohydrate when awake and safe to swallow.'
+      ],
+      'Status Epilepticus': [
+        'Check glucose first and give dextrose if low. Give thiamine before glucose in malnourished/alcohol-use adults if available and it does not delay glucose.',
+        'Diazepam: adult 10 mg rectal, repeat 10 mg after 10 min if still convulsing; child 0.5 mg/kg rectal, repeat half-dose after 10 min if needed. Monitor breathing closely.',
+        'Alternative where trained/available: lorazepam 0.1 mg/kg IV max 4 mg, or midazolam 0.2 mg/kg buccal/IM max 10 mg.',
+        'Second-line loading if persistent: phenobarbital 15-20 mg/kg IV/IM or phenytoin/fosphenytoin per local protocol with cardiac/respiratory monitoring.'
+      ],
+      'Stroke: FAST to Referral': [
+        'Do not give aspirin until intracranial haemorrhage is excluded where imaging is available. If haemorrhage excluded or imaging unavailable and local protocol supports ischaemic stroke treatment, aspirin 150-300 mg loading is commonly used.',
+        'Treat hypoglycaemia immediately: adult 25 g IV glucose; child D10 5 mL/kg if paediatric stroke mimic.',
+        'Avoid routine BP lowering unless severe hypertension with emergency features or thrombolysis pathway criteria; use local stroke protocol.'
+      ],
+      'Acute Coronary Syndrome': [
+        'Aspirin: adult 300 mg chewed immediately unless true allergy or active major bleeding.',
+        'Nitroglycerin/GTN: 0.3-0.6 mg sublingual every 5 min up to 3 doses if SBP adequate; avoid with hypotension, suspected RV infarct, severe aortic stenosis, or recent PDE5 inhibitor.',
+        'Morphine 2-5 mg IV titrated for severe persistent pain if monitored; antiemetic if needed. Anticoagulant/second antiplatelet/reperfusion per Tanzania STG and referral pathway.'
+      ],
+      'DKA / Hyperglycaemic Crisis': [
+        'Fluids: adult normal saline/balanced crystalloid 1 L in first hour if not fluid overloaded; children use protocolized cautious boluses and deficit replacement.',
+        'Insulin infusion: commonly 0.1 units/kg/hour IV after fluids and potassium plan; do not start if potassium is low or unknown with high suspicion of hypokalaemia.',
+        'Potassium replacement and dextrose-containing fluids must follow measured potassium/glucose and local DKA protocol. Refer if labs/monitoring unavailable.'
+      ],
+      'Severe Malaria': [
+        'Artesunate: 2.4 mg/kg IV/IM at 0, 12, and 24 h, then once daily until able to take oral therapy; children under 20 kg may require 3 mg/kg per WHO guidance. Complete full oral ACT course when able.',
+        'If injectable artesunate unavailable for pre-referral: use national fallback such as artemether/quinine/rectal artesunate according to Tanzania malaria guidance and patient age.',
+        'Treat hypoglycaemia immediately and monitor repeatedly; transfuse severe anaemia per STG/local blood policy.'
+      ],
+      'Poisoning and Overdose': [
+        'Activated charcoal: adult 50-100 g PO once; child 1 g/kg PO, only if indicated, early, and airway protected. Avoid for corrosives, hydrocarbons, alcohols, lithium, iron, or unsafe airway.',
+        'Naloxone for opioid respiratory depression: adult 0.4 mg IV/IM/IN repeated/titrated; child 0.01 mg/kg. Ventilate first if apnoeic.',
+        'Organophosphate poisoning: atropine adult 1-2 mg IV/IM repeated every 5 min until secretions/bronchospasm improve; child 0.02-0.05 mg/kg. Add pralidoxime where available per protocol.'
+      ],
+      'Postpartum Haemorrhage': [
+        'Oxytocin: 10 IU IM/IV first-line. For ongoing PPH, use oxytocin infusion per local protocol where IV access/monitoring available.',
+        'Tranexamic acid: 1 g IV over 10 min as soon as possible and within 3 h of birth; repeat 1 g if bleeding continues after 30 min or restarts within 24 h.',
+        'Misoprostol if oxytocin unavailable or adjunct per protocol: 800 micrograms sublingual commonly used for treatment. Avoid duplication/toxicity with multiple uterotonics.',
+        'Give blood products early for shock/major bleeding and antibiotics if manual removal, uterine exploration, or infection risk per STG.'
+      ],
+      'Pre-eclampsia / Eclampsia': [
+        'Magnesium sulfate facility regimen: loading 4 g IV slowly plus 10 g IM (5 g in each buttock), then 5 g IM every 4 h in alternate buttocks for 24 h after last seizure/delivery if RR, reflexes, and urine output are safe.',
+        'Pre-referral when IV not possible: magnesium sulfate 10 g IM total (5 g each buttock), then urgent transfer; if delayed, 5 g IM every 4 h if safe.',
+        'Severe hypertension: hydralazine 5-10 mg IV repeated, labetalol IV, or nifedipine 10 mg PO immediate-release per local obstetric protocol. Avoid sudden overcorrection.',
+        'Magnesium toxicity antidote: calcium gluconate 10%, 10 mL IV slowly with airway/ventilation support.'
+      ],
+      'Paediatric Emergency Triage': [
+        'Hypoglycaemia: D10 5 mL/kg IV/IO; if neonate D10 2 mL/kg. Recheck and continue glucose/feeding.',
+        'Shock without severe malnutrition: crystalloid 10-20 mL/kg, reassess after each bolus. Use malnutrition-specific cautious fluid guidance in SAM.',
+        'Convulsion: diazepam 0.5 mg/kg rectal or midazolam 0.2 mg/kg buccal/IM if available. Monitor breathing.'
+      ],
+      'Neonatal Resuscitation': [
+        'Main treatment is effective ventilation: start bag-mask ventilation with room air within 1 minute if apnoeic/gasping. Use oxygen guided by saturation/response if available.',
+        'Neonatal hypoglycaemia: D10 2 mL/kg IV bolus, then glucose infusion/feeding plan.',
+        'Suspected neonatal sepsis: give ampicillin plus gentamicin using local neonatal weight/age dosing; verify renal function, gestational age, and dosing interval.'
+      ],
+      'Severe Pneumonia': [
+        'Oxygen for SpO2 below target, central cyanosis, severe distress, shock, or altered consciousness.',
+        'Antibiotics per Tanzania STG by age/severity. Common severe community-acquired adult option: ceftriaxone 1-2 g IV daily; add macrolide/other coverage when indicated locally.',
+        'Child severe pneumonia: ampicillin/benzylpenicillin plus gentamicin or ceftriaxone pathway per STG/WHO Pocket Book; dose by weight and age.'
+      ],
+      'Acute Abdomen': [
+        'Analgesia: paracetamol 1 g adult or 15 mg/kg child; morphine 0.05-0.1 mg/kg IV titrated for severe pain with monitoring.',
+        'Antibiotics for peritonitis/perforation/sepsis: ceftriaxone plus metronidazole is a common district-level regimen; adult metronidazole 500 mg IV 8-hourly. Verify STG/local surgical protocol.',
+        'Antiemetic: metoclopramide adult 10 mg PO/IV/IM; child/adolescent 0.1-0.2 mg/kg max 10 mg where appropriate. Avoid in bowel obstruction if concern for harm per clinician judgment.'
+      ],
+      'Head Injury': [
+        'Treat seizures as status epilepticus: diazepam 10 mg PR adult or 0.5 mg/kg PR child; alternatives per protocol.',
+        'Analgesia: paracetamol first-line; cautious opioid titration if severe pain and neuro observations/airway monitoring available.',
+        'Avoid hypotension: use isotonic crystalloid boluses for shock while seeking bleeding source; avoid routine steroids for traumatic brain injury.'
+      ],
+      'Open Fracture / Limb Threat': [
+        'Antibiotics as early as possible per open-fracture protocol. Common first-line: cefazolin 2 g IV adult or 30 mg/kg child; ceftriaxone may be used by local STG/stock. Add metronidazole/gentamicin for heavy contamination per protocol.',
+        'Tetanus toxoid/immunoglobulin according to immunisation and wound status.',
+        'Analgesia: paracetamol plus opioid titration for severe pain; consider ketamine procedural analgesia/sedation only where trained and monitored.'
+      ],
+      'Meningitis / Encephalitis': [
+        'Empiric ceftriaxone urgently: adult commonly 2 g IV every 12 h for meningitis; child 80-100 mg/kg/day IV divided 12-24 hourly depending on age/protocol.',
+        'Add ampicillin for neonates/elderly/pregnancy or Listeria risk where indicated; neonatal regimens require weight/age dosing.',
+        'Dexamethasone may be indicated before/with first antibiotic dose in selected bacterial meningitis protocols; follow Tanzania STG/local policy.'
+      ],
+      'Severe Acute Malnutrition': [
+        'Hypoglycaemia: give 10% glucose 5 mL/kg orally/NG/IV if conscious route appropriate, then start frequent therapeutic feeds.',
+        'Antibiotics: give empiric broad-spectrum antibiotics per WHO/Tanzania SAM protocol, commonly ampicillin plus gentamicin or ceftriaxone depending on complications/local policy.',
+        'Fluids: use ReSoMal orally/NG for dehydration when appropriate; IV fluids only for shock using SAM-specific cautious regimen.'
+      ],
+      'Sickle Cell Crisis': [
+        'Analgesia promptly: paracetamol 15 mg/kg child or 1 g adult; ibuprofen if not contraindicated; morphine 0.05-0.1 mg/kg IV/SC titrated for severe pain.',
+        'Fever/sepsis: ceftriaxone 50-100 mg/kg child or 1-2 g adult IV per severity/local protocol after cultures if this does not delay.',
+        'Transfusion for severe anaemia/acute chest/stroke per STG and blood availability; avoid routine overhydration.'
+      ],
+      'Acute Kidney Injury': [
+        'Hyperkalaemia with ECG changes or severe suspicion: calcium gluconate 10%, adult 10 mL IV slowly with ECG monitoring; child 0.5 mL/kg max 10 mL.',
+        'Shift potassium: insulin regular 10 units IV plus 25 g glucose adult; child 0.1 units/kg insulin with glucose per paediatric protocol. Nebulized salbutamol can be adjunct.',
+        'Avoid/hold nephrotoxins and dose-adjust antibiotics, anticoagulants, insulin, opioids, and anticonvulsants.'
+      ],
+      'Upper GI Bleeding': [
+        'Resuscitate with crystalloid/blood; activate transfusion pathway. Consider tranexamic acid only if local protocol supports; many GI bleed guidelines do not use it routinely.',
+        'Suspected variceal bleed: ceftriaxone 1 g IV daily and vasoactive therapy such as octreotide/terlipressin where available per specialist protocol.',
+        'Non-variceal severe bleed: proton pump inhibitor such as omeprazole/pantoprazole IV per local protocol while arranging endoscopy.'
+      ],
+      'Diarrhoea / Cholera Dehydration': [
+        'ORS: give according to dehydration plan; severe dehydration needs IV Ringer lactate or normal saline with age-specific WHO/Tanzania schedule.',
+        'Zinc for children: 10 mg daily if under 6 months, 20 mg daily if 6 months or older, for 10-14 days.',
+        'Suspected severe cholera: doxycycline/azithromycin/ciprofloxacin per current national susceptibility guidance; avoid blind antibiotic use when not indicated.'
+      ],
+      'HIV Advanced Disease / Opportunistic Infection': [
+        'Severe bacterial infection/sepsis: start broad-spectrum antibiotics per STG; ceftriaxone 1-2 g IV adult is common but tailor to source.',
+        'Suspected PCP with hypoxia: high-dose co-trimoxazole per weight plus corticosteroid when indicated; follow national HIV guidance.',
+        'Suspected cryptococcal meningitis: do not start immediate ART; urgent diagnostic/treatment pathway with amphotericin/flucytosine/fluconazole per national availability.'
+      ],
+      'TB Emergency Presentations': [
+        'Start TB treatment only through national TB regimen pathway unless life-threatening disease requires empiric specialist decision.',
+        'TB meningitis/pericarditis: corticosteroid adjunct is commonly indicated with anti-TB therapy; dosing per national TB guideline.',
+        'Massive haemoptysis: resuscitate, position bleeding lung down if known, tranexamic acid only per local protocol, and urgent referral for bronchoscopy/surgery/intervention.'
+      ],
+      'Acute Psychosis / Agitation': [
+        'First exclude/treat hypoglycaemia, hypoxia, sepsis, head injury, intoxication/withdrawal, and eclampsia.',
+        'Severe agitation medication per mhGAP/local protocol: haloperidol 2.5-5 mg PO/IM adult, repeat cautiously; add promethazine/benzodiazepine only where protocol and monitoring allow.',
+        'Avoid benzodiazepines in significant alcohol/respiratory depression unless treating withdrawal/seizure and airway monitoring is available.'
+      ],
+      'Self-Harm / Suicide Risk': [
+        'Treat toxidrome/injury first. Activated charcoal adult 50-100 g or child 1 g/kg only if indicated, early, and airway safe.',
+        'Opioid overdose: naloxone 0.4 mg IV/IM/IN adult repeated/titrated; child 0.01 mg/kg.',
+        'Organophosphate: atropine repeated to dry secretions and improve breathing; pralidoxime where available. Paracetamol overdose requires acetylcysteine pathway per time/level/protocol.'
+      ],
+      'Eye Emergency: Red Eye / Vision Loss': [
+        'Chemical eye injury: irrigate immediately with clean water/normal saline for at least 20-30 min and continue until pH normal if strips available.',
+        'Pain control: oral analgesia; topical anaesthetic only for examination/irrigation by clinician, not take-home.',
+        'Suspected corneal ulcer: topical antibiotic per eye protocol and same-day ophthalmology; avoid steroid drops unless ophthalmologist directs.'
+      ],
+      'ENT Emergency: Airway / Epistaxis': [
+        'Epistaxis: topical vasoconstrictor where available, then anterior packing if pressure fails; give analgesia and antibiotics only when packing/local policy indicates.',
+        'Anaphylaxis/airway oedema: adrenaline IM dosing as anaphylaxis protocol while preparing airway/transfer.',
+        'Deep neck infection: ceftriaxone plus metronidazole or ampicillin-sulbactam/clindamycin per local protocol; urgent airway/surgical referral.'
+      ],
+      'Dental / Maxillofacial Infection': [
+        'Analgesia: paracetamol 1 g adult or 15 mg/kg child; ibuprofen if not contraindicated.',
+        'Spreading odontogenic infection: amoxicillin or amoxicillin-clavulanate/metronidazole options per STG; severe/deep infection often ceftriaxone plus metronidazole IV pending drainage.',
+        'Airway signs require immediate referral; antibiotics do not replace drainage/source control.'
+      ],
+      'Transfusion Reaction': [
+        'Stop transfusion; keep IV open with normal saline. Treat anaphylaxis with adrenaline IM 0.5 mg adult or 0.01 mg/kg child.',
+        'Fever/rigors: paracetamol and medical review; do not restart until serious reaction excluded by clinician/blood bank.',
+        'Shock/haemolysis/TRALI/TACO: oxygen, fluids or diuretics according to syndrome, senior review, blood bank notification, and monitoring.'
+      ],
+      'Hypertensive Emergency': [
+        'Severe hypertension with eclampsia/pre-eclampsia: magnesium sulfate plus hydralazine/labetalol/nifedipine per obstetric protocol.',
+        'Pulmonary oedema: nitrates if BP allows plus diuretic per heart failure protocol. Stroke/ACS/aortic dissection each has different BP target.',
+        'Avoid immediate-release nifedipine bite-and-swallow for non-pregnancy hypertensive urgency unless local protocol specifically directs.'
+      ],
+      'Acute Heart Failure / Pulmonary Oedema': [
+        'Oxygen if hypoxic; CPAP/NIV if available for severe pulmonary oedema and no contraindication.',
+        'Furosemide: adult 20-40 mg IV, higher if chronic diuretic use/renal failure per clinician judgment; child dosing requires paediatric protocol.',
+        'GTN: 0.3-0.6 mg SL or IV infusion if severe hypertension/ACS and SBP adequate; avoid hypotension/RV infarct/PDE5 inhibitor.'
+      ],
+      'Febrile Neutropenia / Oncology Emergency': [
+        'Give anti-pseudomonal broad-spectrum antibiotic urgently per oncology/local protocol. If unavailable, ceftriaxone-based interim therapy may be used only according to local referral guidance.',
+        'Fluids, oxygen, glucose, and sepsis care as needed; avoid rectal medications/temperatures in neutropenia.',
+        'Tumour lysis risk: aggressive IV fluids and allopurinol/rasburicase per specialist protocol; monitor potassium, phosphate, calcium, uric acid, creatinine.'
+      ]
+    };
+    const levelPlans = {
+      dispensary: {
+        Obstetric: 'Give first uterotonic/magnesium/antibiotic steps within scope, start referral immediately, and send mother with vitals, treatments, partograph/notes, and escort.',
+        Neonatal: 'Warm, ventilate with bag-mask, check feeding/glucose risk, and refer any persistent respiratory distress, prematurity, sepsis signs, or failed transition.',
+        Paediatric: 'Use emergency signs, oxygen/glucose/ORS/first antibiotics where indicated, and transfer children with danger signs after initial stabilization.',
+        Trauma: 'Control bleeding, immobilise, analgesia, tetanus/open wound care, and transfer major trauma without delaying for nonessential procedures.',
+        Surgical: 'Nil by mouth, IV access/fluids/analgesia/antibiotics if sepsis or peritonitis, and urgent surgical referral.',
+        Infectious: 'Identify public health danger signs, start first dose where protocol allows, isolate when needed, notify, and refer severe disease.',
+        'Mental Health': 'Ensure safety, exclude medical causes, involve family/support, and refer high-risk agitation, psychosis, intoxication, or suicide risk.',
+        default: 'Stabilise, give first safe treatment within scope, document response, and arrange transfer early.'
+      },
+      healthCentre: {
+        Obstetric: 'Run BEmONC-level actions where available, monitor closely, and transfer early for operative delivery, blood, ICU/HDU, or persistent instability.',
+        Neonatal: 'Provide warmth, ventilation, oxygen, antibiotics/glucose support where indicated, and transfer sick/preterm neonates needing CPAP, labs, or prolonged monitoring.',
+        Paediatric: 'Treat common severe illness, observe response, and transfer persistent danger signs, severe malnutrition complications, severe anaemia, or oxygen dependence.',
+        Trauma: 'Provide splinting, wound care, analgesia, antibiotics/tetanus, basic imaging if present, and transfer open fractures, head injury, abdominal/chest trauma.',
+        Surgical: 'Start resuscitation and antibiotics, consult district surgeon, and transfer if theatre/source control is not available.',
+        Infectious: 'Treat common severe infections and dehydration, apply isolation/notification, and transfer shock, meningitis, severe malaria complications, or oxygen need.',
+        default: 'Start protocol care and observe only if clearly improving; transfer when diagnostics, blood, theatre, or close monitoring are needed.'
+      },
+      district: {
+        Obstetric: 'Provide CEmONC pathway where available: blood, theatre, magnesium, antihypertensives, neonatal support, and transfer refractory or specialist cases.',
+        Neonatal: 'Use newborn corner/NBU pathway, antibiotics, glucose/thermal care, oxygen, and transfer for CPAP/ventilation, extreme prematurity, surgery, or severe sepsis.',
+        Paediatric: 'Admit and manage common emergencies with oxygen, IV/IO, transfusion pathway, malaria/sepsis care, and transfer ICU/specialist cases.',
+        Trauma: 'Use trauma team, X-ray/lab/blood/theatre as available, and transfer neurosurgery, vascular, complex ortho, major burns, or ICU needs.',
+        Surgical: 'Operate or drain when capability exists; transfer cases requiring specialist surgery, CT, endoscopy, ICU, or unavailable blood.',
+        Infectious: 'Admit severe infections, start national regimens, notify outbreaks, and transfer organ failure, dialysis, ICU, or specialist diagnostics.',
+        default: 'Provide definitive district-level care and transfer early if non-response, specialist procedure, advanced imaging, ICU, or dialysis is needed.'
+      },
+      regional: {
+        Obstetric: 'Use specialist obstetric, blood bank, theatre, HDU, and newborn services; refer only for subspecialty or ICU capacity limits.',
+        Neonatal: 'Provide specialist neonatal care where available; escalate for ventilation, neonatal surgery, extreme prematurity, or unavailable diagnostics.',
+        Paediatric: 'Use paediatric specialist/HDU pathways and support district hospitals; refer for PICU, oncology, dialysis, neurosurgery, or complex surgery.',
+        Trauma: 'Coordinate surgical/orthopaedic/anaesthetic care and refer neurosurgical, vascular, major burns, complex pelvic/spine, or ICU overflow cases.',
+        Surgical: 'Manage complex general surgery and endoscopy where available; refer subspecialty, advanced imaging/intervention, or ICU-limited cases.',
+        Infectious: 'Manage complicated infection with specialist/lab support; refer for advanced HIV/TB, dialysis, ICU ventilation, or specialist isolation needs.',
+        default: 'Use specialist services early, accept/support lower-level referrals, and refer onward only when subspecialty or critical care resources are exceeded.'
+      },
+      tertiary: {
+        Obstetric: 'Run definitive maternal-fetal, ICU/HDU, blood bank, anaesthesia, and neonatal specialist pathways; plan back-referral after stabilization.',
+        Neonatal: 'Use NICU/subspecialty pathways including CPAP/ventilation/surgery where available and document back-transfer criteria.',
+        Paediatric: 'Use PICU/subspecialty pathways, advanced imaging/labs, and multidisciplinary review for complex or refractory cases.',
+        Trauma: 'Activate definitive trauma, neurosurgery/vascular/orthoplastic/burns/ICU pathways and coordinate rehabilitation early.',
+        Surgical: 'Provide subspecialty source control, advanced endoscopy/intervention, ICU, and multidisciplinary planning.',
+        Infectious: 'Use advanced diagnostics, specialist ID/TB/HIV input, ICU, dialysis, and public health coordination for complex disease.',
+        default: 'Provide definitive specialist care, advanced diagnostics, ICU/HDU where indicated, and create a down-referral plan once stable.'
+      }
+    };
+
+    function sourceLinks(keys) {
+      return keys.map(k => `<a href="${sources[k][1]}" target="_blank" rel="noopener">${sources[k][0]}</a>`).join(' | ');
+    }
+
+    function levelAdvice(protocol) {
+      const level = facilityLevels[state.level] || facilityLevels.district;
+      const planSet = levelPlans[state.level] || levelPlans.district;
+      const tailored = planSet[protocol.category] || planSet.default;
+      const urgent = protocol.urgency === 'red'
+        ? 'Treat as immediate resuscitation priority at this level.'
+        : 'Manage promptly with reassessment and clear escalation criteria.';
+      const department = protocol.category;
+      return `<strong>${level.label}:</strong> ${urgent} ${tailored} <span class="small">Capacity assumption: ${level.capacity} Department pathway: ${department}.</span>`;
+    }
+
+    function medicationBlock(protocol) {
+      const meds = medicationGuides[protocol.title];
+      if (!meds) return '';
+      return `
+        <div class="med-box">
+          <h3>Protocol medicines and initial emergency doses</h3>
+          <ul class="med-list">${meds.map(m => `<li>${m}</li>`).join('')}</ul>
+          <p class="small">Verify patient weight, pregnancy, allergy, renal/hepatic function, age, concentration, route, contraindications, and current Tanzania STG/local hospital protocol before administration.</p>
+        </div>
+      `;
+    }
+
+    function renderLevelSummary(count) {
+      const level = facilityLevels[state.level] || facilityLevels.district;
+      $('#levelSummary').innerHTML = `<strong>${level.label}</strong><br>${level.action}<br><span class="small">${level.capacity} Showing ${count} matching protocols. Select a protocol below to expand its level-specific management, protocol medicines, danger signs, and sources.</span>`;
+    }
+
+    function renderChips() {
+      const cats = ['All', ...new Set(allProtocols().map(p => p.category))];
+      $('#protocolChips').innerHTML = cats.map(c => `<button class="chip ${state.category === c ? 'active' : ''}" data-cat="${c}">${c}</button>`).join('');
+      const groups = ['All', ...new Set(calculators.map(c => c.group))];
+      $('#calcChips').innerHTML = groups.map(g => `<button class="chip ${state.calcGroup === g ? 'active' : ''}" data-group="${g}">${g}</button>`).join('');
+    }
+
+    function renderProtocols() {
+      const q = $('#protocolSearch').value.toLowerCase();
+      const list = allProtocols().filter(p =>
+        (state.category === 'All' || p.category === state.category) &&
+        (p.title + ' ' + p.category + ' ' + p.keywords + ' ' + p.steps.join(' ') + ' ' + (medicationGuides[p.title] || []).join(' ')).toLowerCase().includes(q)
+      );
+      renderLevelSummary(list.length);
+      $('#protocolGrid').innerHTML = list.map(p => `
+        <details class="protocol-item">
+          <summary>
+            <span class="protocol-title">
+              <h2>${p.title}</h2>
+              <span>${p.category} pathway | ${facilityLevels[state.level].label}</span>
+            </span>
+            <span class="tag ${p.urgency}">${p.category}</span>
+          </summary>
+          <div class="body">
+            <div class="level-box">${levelAdvice(p)}</div>
+            <ol class="steps">${p.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+            ${medicationBlock(p)}
+            <div class="danger">${p.danger}</div>
+            <div class="source">${sourceLinks(p.source)}</div>
+          </div>
+        </details>
+      `).join('') || '<p>No matching protocols.</p>';
+    }
+
+    function getVisibleCalcs() {
+      const q = $('#calcSearch').value.toLowerCase();
+      return calculators.filter(c => (state.calcGroup === 'All' || c.group === state.calcGroup) && (c.name + ' ' + c.group).toLowerCase().includes(q));
+    }
+
+    function renderCalcMenu() {
+      const list = getVisibleCalcs();
+      if (!list.some(c => c.id === state.activeCalc) && list.length) state.activeCalc = list[0].id;
+      $('#calcMenu').innerHTML = list.map(c => `<button class="${state.activeCalc === c.id ? 'active' : ''}" data-calc="${c.id}">${c.name}<br><span class="small">${c.group}</span></button>`).join('');
+    }
+
+    function fieldInput(id, label) {
+      const presets = {
+        sex: '<select id="f_sex"><option value="1">Male</option><option value="0">Female</option></select>',
+        mental: '<select id="f_mental"><option value="0">No</option><option value="1">Yes</option></select>',
+        gaWound: '<select id="f_gaWound"><option value="1">&lt;1 cm, clean, low energy</option><option value="2">&gt;1 cm, no extensive damage</option><option value="3">High energy / extensive contamination / segmental</option></select>',
+        gaCoverage: '<select id="f_gaCoverage"><option value="0">Adequate soft tissue coverage</option><option value="1">Type III pattern, coverage adequate after debridement</option><option value="2">Bone exposure/periosteal stripping/flap needed</option></select>',
+        gaVascular: '<select id="f_gaVascular"><option value="0">No arterial repair needed</option><option value="1">Arterial injury requiring repair</option></select>',
+        wagnerGrade: '<select id="f_wagnerGrade"><option value="0">0: intact skin / pre-ulcer</option><option value="1">1: superficial ulcer</option><option value="2">2: deep to tendon/bone/joint/capsule</option><option value="3">3: abscess/osteomyelitis/joint sepsis</option><option value="4">4: localized forefoot gangrene</option><option value="5">5: whole-foot gangrene</option></select>',
+        utGrade: '<select id="f_utGrade"><option value="0">0: epithelialized pre/post-ulcer</option><option value="1">1: superficial wound</option><option value="2">2: penetrates tendon/capsule</option><option value="3">3: penetrates bone/joint</option></select>',
+        utInfection: '<select id="f_utInfection"><option value="0">No infection</option><option value="1">Infection present</option></select>',
+        utIschemia: '<select id="f_utIschemia"><option value="0">No ischaemia</option><option value="1">Ischaemia present</option></select>',
+        sinSite: '<select id="f_sinSite"><option value="0">Forefoot</option><option value="1">Midfoot or hindfoot</option></select>',
+        sinIschemia: '<select id="f_sinIschemia"><option value="0">Absent</option><option value="1">Present</option></select>',
+        sinNeuropathy: '<select id="f_sinNeuropathy"><option value="0">Absent</option><option value="1">Present</option></select>',
+        sinInfection: '<select id="f_sinInfection"><option value="0">Absent</option><option value="1">Present</option></select>',
+        sinArea: '<select id="f_sinArea"><option value="0">&lt;1 cm2</option><option value="1">&gt;=1 cm2</option></select>',
+        sinDepth: '<select id="f_sinDepth"><option value="0">Skin/subcutaneous only</option><option value="1">Tendon, bone, or joint</option></select>',
+        peDvtSigns: '<select id="f_peDvtSigns"><option value="0">No</option><option value="1">Yes: +3</option></select>',
+        peLikely: '<select id="f_peLikely"><option value="0">No</option><option value="1">Yes: +3</option></select>',
+        peHr: '<select id="f_peHr"><option value="0">No</option><option value="1">Yes: +1.5</option></select>',
+        peImmobil: '<select id="f_peImmobil"><option value="0">No</option><option value="1">Yes: +1.5</option></select>',
+        pePrevious: '<select id="f_pePrevious"><option value="0">No</option><option value="1">Yes: +1.5</option></select>',
+        peHemoptysis: '<select id="f_peHemoptysis"><option value="0">No</option><option value="1">Yes: +1</option></select>',
+        peCancer: '<select id="f_peCancer"><option value="0">No</option><option value="1">Yes: +1</option></select>',
+        percAge: '<select id="f_percAge"><option value="0">No</option><option value="1">Yes</option></select>',
+        percHr: '<select id="f_percHr"><option value="0">No</option><option value="1">Yes</option></select>',
+        percSat: '<select id="f_percSat"><option value="0">No</option><option value="1">Yes</option></select>',
+        percHemoptysis: '<select id="f_percHemoptysis"><option value="0">No</option><option value="1">Yes</option></select>',
+        percEstrogen: '<select id="f_percEstrogen"><option value="0">No</option><option value="1">Yes</option></select>',
+        percSurgery: '<select id="f_percSurgery"><option value="0">No</option><option value="1">Yes</option></select>',
+        percVte: '<select id="f_percVte"><option value="0">No</option><option value="1">Yes</option></select>',
+        percLeg: '<select id="f_percLeg"><option value="0">No</option><option value="1">Yes</option></select>',
+        heartHistory: '<select id="f_heartHistory"><option value="0">Slightly suspicious: 0</option><option value="1">Moderately suspicious: 1</option><option value="2">Highly suspicious: 2</option></select>',
+        heartEcg: '<select id="f_heartEcg"><option value="0">Normal: 0</option><option value="1">Nonspecific repolarization: 1</option><option value="2">Significant ST depression: 2</option></select>',
+        heartAge: '<select id="f_heartAge"><option value="0">&lt;45 years: 0</option><option value="1">45-64 years: 1</option><option value="2">&gt;=65 years: 2</option></select>',
+        heartRisk: '<select id="f_heartRisk"><option value="0">No risk factors: 0</option><option value="1">1-2 risk factors: 1</option><option value="2">&gt;=3 risk factors or known atherosclerosis: 2</option></select>',
+        heartTroponin: '<select id="f_heartTroponin"><option value="0">&lt;= normal limit: 0</option><option value="1">1-3x normal limit: 1</option><option value="2">&gt;3x normal limit: 2</option></select>',
+        curbConfusion: '<select id="f_curbConfusion"><option value="0">No</option><option value="1">Yes</option></select>',
+        curbUrea: '<select id="f_curbUrea"><option value="0">No</option><option value="1">Yes</option></select>',
+        curbRr: '<select id="f_curbRr"><option value="0">No</option><option value="1">Yes</option></select>',
+        curbBp: '<select id="f_curbBp"><option value="0">No</option><option value="1">Yes</option></select>',
+        curbAge: '<select id="f_curbAge"><option value="0">No</option><option value="1">Yes</option></select>',
+        pulse100: '<select id="f_pulse100"><option value="0">No</option><option value="1">Yes</option></select>',
+        melena: '<select id="f_melena"><option value="0">No</option><option value="1">Yes</option></select>',
+        syncope: '<select id="f_syncope"><option value="0">No</option><option value="1">Yes</option></select>',
+        hepatic: '<select id="f_hepatic"><option value="0">No</option><option value="1">Yes</option></select>',
+        cardiac: '<select id="f_cardiac"><option value="0">No</option><option value="1">Yes</option></select>',
+        bishopDilation: '<select id="f_bishopDilation"><option value="0">Closed: 0</option><option value="1">1-2 cm: 1</option><option value="2">3-4 cm: 2</option><option value="3">&gt;=5 cm: 3</option></select>',
+        bishopEffacement: '<select id="f_bishopEffacement"><option value="0">0-30%: 0</option><option value="1">40-50%: 1</option><option value="2">60-70%: 2</option><option value="3">&gt;=80%: 3</option></select>',
+        bishopStation: '<select id="f_bishopStation"><option value="0">-3: 0</option><option value="1">-2: 1</option><option value="2">-1/0: 2</option><option value="3">+1/+2: 3</option></select>',
+        bishopConsistency: '<select id="f_bishopConsistency"><option value="0">Firm: 0</option><option value="1">Medium: 1</option><option value="2">Soft: 2</option></select>',
+        bishopPosition: '<select id="f_bishopPosition"><option value="0">Posterior: 0</option><option value="1">Mid-position: 1</option><option value="2">Anterior: 2</option></select>',
+        dialysis: '<select id="f_dialysis"><option value="0">No</option><option value="1">Yes</option></select>',
+        sirsTemp: '<select id="f_sirsTemp"><option value="0">No</option><option value="1">Yes</option></select>',
+        sirsHr: '<select id="f_sirsHr"><option value="0">No</option><option value="1">Yes</option></select>',
+        sirsRr: '<select id="f_sirsRr"><option value="0">No</option><option value="1">Yes</option></select>',
+        sirsWbc: '<select id="f_sirsWbc"><option value="0">No</option><option value="1">Yes</option></select>'
+      };
+      return `<label>${label}${presets[id] || `<input id="f_${id}" type="number" step="any" inputmode="decimal">`}</label>`;
+    }
+
+    function renderCalcPanel() {
+      const calc = calculators.find(c => c.id === state.activeCalc) || calculators[0];
+      $('#calcPanel').innerHTML = `
+        <h2>${calc.name}</h2>
+        <p class="small">${calc.group} calculator. Score tools use the explicit criteria shown in each field; confirm the chosen guideline version and local protocol before acting.</p>
+        <div class="form-grid">${calc.fields.map(f => fieldInput(f[0], f[1])).join('')}</div>
+        <div class="result" id="result"><span class="value">Enter values</span><span class="formula">Results update instantly.</span></div>
+        <div class="cutoff-box">
+          <h3>Interpretation cutoffs</h3>
+          <ul>${(calculatorCutoffs[calc.id] || ['No universal cutoff available; interpret with the source guideline and local protocol.']).map(item => `<li>${item}</li>`).join('')}</ul>
+        </div>
+      `;
+      calc.fields.forEach(([id]) => $('#f_' + id).addEventListener('input', updateCalc));
+      calc.fields.forEach(([id]) => $('#f_' + id).addEventListener('change', updateCalc));
+      updateCalc();
+    }
+
+    function updateCalc() {
+      const calc = calculators.find(c => c.id === state.activeCalc);
+      const values = {};
+      let valid = true;
+      calc.fields.forEach(([id]) => {
+        const raw = $('#f_' + id).value;
+        if (raw === '') valid = false;
+        values[id] = Number(raw);
+        if (!Number.isFinite(values[id])) valid = false;
+      });
+      if (!valid) {
+        $('#result').innerHTML = '<span class="value">Enter values</span><span class="formula">Results update instantly.</span>';
+        return;
+      }
+      const [num, unit, interp, note] = calc.calc(values);
+      const shown = typeof num === 'number' ? (Math.abs(num) >= 100 ? Math.round(num) : Math.round(num * 10) / 10) : num;
+      $('#result').innerHTML = `<span class="value">${shown} ${unit}</span><strong>${interp}</strong><p class="formula">${note}</p>`;
+    }
+
+    document.addEventListener('click', e => {
+      if (e.target.matches('.tab')) {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        $('#protocolsView').classList.toggle('hidden', e.target.dataset.view !== 'protocols');
+        $('#calculatorsView').classList.toggle('hidden', e.target.dataset.view !== 'calculators');
+      }
+      if (e.target.matches('[data-cat]')) {
+        state.category = e.target.dataset.cat;
+        renderChips(); renderProtocols();
+      }
+      if (e.target.matches('[data-group]')) {
+        state.calcGroup = e.target.dataset.group;
+        renderChips(); renderCalcMenu(); renderCalcPanel();
+      }
+      const calcButton = e.target.closest('[data-calc]');
+      if (calcButton) {
+        state.activeCalc = calcButton.dataset.calc;
+        renderCalcMenu(); renderCalcPanel();
+      }
+    });
+
+    $('#protocolSearch').addEventListener('input', renderProtocols);
+    $('#facilityLevel').addEventListener('change', e => { state.level = e.target.value; renderProtocols(); });
+    $('#calcSearch').addEventListener('input', () => { renderCalcMenu(); renderCalcPanel(); });
+    renderChips();
+    renderProtocols();
+    renderCalcMenu();
+    renderCalcPanel();
+
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
