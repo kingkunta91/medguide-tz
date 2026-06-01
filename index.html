@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuide TZ</title>
+  <meta name="description" content="Medical emergency protocols with in-protocol doses, plus calculators and scores for clinical practice in Tanzania.">
+  <style>
+    :root {
+      --ink: #10211f;
+      --muted: #5d6c68;
+      --line: #dbe5e0;
+      --wash: #f4f7f6;
+      --panel: #ffffff;
+      --brand: #006b5e;
+      --deep: #173c49;
+      --red: #a83f39;
+      --amber: #9a7018;
+      --blue: #255f93;
+      --shadow: 0 24px 70px rgba(16, 33, 31, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(#fbfcfc, var(--wash));
+      letter-spacing: 0;
+    }
+    header {
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+    }
+    .nav, main, footer {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: var(--brand);
+    }
+    .brand img { width: 46px; height: 46px; }
+    .nav a, .button {
+      color: var(--brand);
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .nav a {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px 13px;
+      background: white;
+    }
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+      gap: 42px;
+      align-items: center;
+      padding-top: 38px;
+      padding-bottom: 38px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 5.2rem);
+      line-height: 0.96;
+      color: var(--deep);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #cfe0db;
+      background: #edf6f3;
+      color: var(--brand);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+    .lead {
+      margin: 20px 0 0;
+      max-width: 680px;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      line-height: 1.5;
+      color: #485955;
+    }
+    .trust {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .trust span {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 26px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 6px;
+      border: 1px solid var(--brand);
+      background: white;
+      box-shadow: 0 10px 24px rgba(16, 33, 31, 0.08);
+    }
+    .button.primary {
+      background: var(--brand);
+      color: white;
+    }
+    .device {
+      background: #142321;
+      border-radius: 34px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      max-width: 370px;
+      justify-self: end;
+    }
+    .screen {
+      background: #f7faf8;
+      border-radius: 22px;
+      overflow: hidden;
+      min-height: 640px;
+      border: 1px solid #0f1917;
+    }
+    .screen-head {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: white;
+    }
+    .screen-head strong {
+      color: var(--brand);
+      font-size: 1.2rem;
+    }
+    .search {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .row {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+    .row span { color: var(--muted); font-size: 0.8rem; }
+    .tag {
+      color: white;
+      background: var(--blue);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+    .tag.red { background: var(--red); }
+    .section {
+      padding-top: 38px;
+      padding-bottom: 38px;
+      border-top: 1px solid var(--line);
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .feature {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 18px;
+      min-height: 142px;
+      box-shadow: 0 14px 34px rgba(16, 33, 31, 0.06);
+    }
+    .feature h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: var(--deep);
+    }
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.4;
+      font-size: 0.92rem;
+    }
+    .about {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(280px, 1.15fr);
+      gap: 22px;
+      align-items: start;
+    }
+    .about h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3vw, 2.35rem);
+      line-height: 1.05;
+      color: var(--deep);
+    }
+    .about p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .source-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .source-list span {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--brand);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+    footer {
+      color: var(--muted);
+      padding-top: 22px;
+      padding-bottom: 34px;
+      font-size: 0.85rem;
+    }
+    @media (max-width: 820px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .device { justify-self: stretch; max-width: none; }
+      .screen { min-height: 520px; }
+      .features { grid-template-columns: 1fr 1fr; }
+      .about { grid-template-columns: 1fr; }
+      .nav { align-items: flex-start; flex-direction: column; padding-top: 14px; padding-bottom: 14px; }
+    }
+    @media (max-width: 520px) {
+      .features { grid-template-columns: 1fr; }
+      .actions .button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="./medguide-tz-mobile/icon.svg" alt="" width="44" height="44">
+        <span>MedGuide TZ</span>
+      </div>
+      <a href="./medguide-tz-mobile/index.html">Open app</a>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Clinical reference aid for Tanzania</div>
+        <h1>MedGuide TZ</h1>
+        <p class="lead">Medical emergency protocols with in-protocol medicine doses, plus clinical scores and daily calculators for doctors working across Tanzanian hospital levels.</p>
+        <div class="trust">
+          <span>47 protocols</span>
+          <span>46 calculators</span>
+          <span>Hospital-level pathways</span>
+          <span>Offline-ready PWA</span>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="./medguide-tz-mobile/index.html">Launch mobile app</a>
+          <a class="button" href="./medguide-tz-mobile.zip">Download app bundle</a>
+        </div>
+      </div>
+      <div class="device" aria-label="App preview">
+        <div class="screen">
+          <div class="screen-head">
+            <strong>MedGuide TZ</strong>
+            <div class="search">Search emergencies, scores, protocol doses...</div>
+          </div>
+          <div class="row"><div><b>Anaphylaxis</b><br><span>District hospital pathway</span></div><span class="tag red">Resus</span></div>
+          <div class="row"><div><b>Postpartum Haemorrhage</b><br><span>Oxytocin, TXA, referral triggers</span></div><span class="tag red">OB</span></div>
+          <div class="row"><div><b>Severe Malaria</b><br><span>Artesunate dosing and escalation</span></div><span class="tag red">Medical</span></div>
+          <div class="row"><div><b>Alvarado Score</b><br><span>Cutoffs shown with result</span></div><span class="tag">Score</span></div>
+          <div class="row"><div><b>Gustilo-Anderson</b><br><span>Open fracture classification</span></div><span class="tag">Ortho</span></div>
+          <div class="row"><div><b>Glasgow-Blatchford</b><br><span>UGIB risk interpretation</span></div><span class="tag">GI</span></div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="features">
+        <div class="feature">
+          <h2>47 Protocols</h2>
+          <p>Emergency, medical, surgical, obstetric, paediatric, trauma, renal, infectious disease, and mental health workflows.</p>
+        </div>
+        <div class="feature">
+          <h2>46 Calculators</h2>
+          <p>Scores and formulas with interpretation cutoffs, including Alvarado, HEART, CURB-65, MELD-Na, DFU tools, and GCS.</p>
+        </div>
+        <div class="feature">
+          <h2>Hospital Levels</h2>
+          <p>Management guidance adapts for dispensary, health centre, district, regional, and tertiary hospital settings.</p>
+        </div>
+        <div class="feature">
+          <h2>Offline Ready</h2>
+          <p>Built as a mobile web app bundle that can be hosted and installed to a phone home screen.</p>
+        </div>
+      </div>
+    </section>
+    <section class="section about" id="about">
+      <div>
+        <h2>Built for clinical use, with guideline context.</h2>
+      </div>
+      <div>
+        <p>MedGuide TZ was created by Dr. Michael Wambura, a medical doctor at Naturra Wellness Hub, as a practical bedside aid for emergency protocols, calculators, and scores in Tanzanian clinical settings.</p>
+        <p>The summaries are intended to support, not replace, clinical judgement. They should be checked against current local hospital policy, Tanzania Ministry of Health guidance, and the linked WHO source documents before institutional deployment.</p>
+        <div class="source-list" aria-label="Guideline sources">
+          <span>Tanzania STG/NEMLIT</span>
+          <span>WHO Emergency Care Toolkit</span>
+          <span>WHO/ICRC Basic Emergency Care</span>
+          <span>WHO Interagency Integrated Triage Tool</span>
+          <span>WHO mhGAP</span>
+          <span>WHO Pocket Book of Hospital Care for Children</span>
+          <span>WHO Managing Complications in Pregnancy and Childbirth</span>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    MedGuide TZ is a clinical reference aid for emergencies, calculators, and scores, built by Dr. Michael Wambura, a medical doctor at Naturra Wellness Hub. Medicine guidance is limited to doses embedded inside emergency protocols; confirm local protocols, patient factors, formulations, and current Tanzania Ministry of Health and WHO guidance before clinical action.
+  </footer>
+</body>
+</html>

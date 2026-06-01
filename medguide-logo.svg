@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 240" role="img" aria-labelledby="title desc">
+  <title id="title">MedGuide TZ logo</title>
+  <desc id="desc">A green clinical shield with a white medical cross and the MedGuide TZ wordmark.</desc>
+  <rect width="920" height="240" rx="24" fill="#ffffff"/>
+  <g transform="translate(54 38)">
+    <rect x="0" y="0" width="164" height="164" rx="42" fill="#006b5e"/>
+    <path d="M76 34h12c7 0 12 5 12 12v25h25c7 0 12 5 12 12v12c0 7-5 12-12 12h-25v25c0 7-5 12-12 12H76c-7 0-12-5-12-12v-25H39c-7 0-12-5-12-12V83c0-7 5-12 12-12h25V46c0-7 5-12 12-12z" fill="#ffffff"/>
+    <path d="M43 130c27 20 53 30 79 30" fill="none" stroke="#b7ded4" stroke-width="11" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(254 65)">
+    <text x="0" y="58" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="800" fill="#142321">MedGuide</text>
+    <text x="326" y="58" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="800" fill="#006b5e">TZ</text>
+    <text x="2" y="102" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#596864">Emergency protocols, doses, scores, and calculators</text>
+  </g>
+</svg>
