@@ -281,6 +281,12 @@
       font-size: 0.9rem;
       line-height: 1.35;
     }
+    .level-box ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+    .level-box li { margin-bottom: 7px; }
+    .level-box li:last-child { margin-bottom: 0; }
     .med-box {
       margin-top: 10px;
       padding: 10px;
@@ -407,12 +413,23 @@
       font-size: 0.82rem;
     }
     @media (max-width: 760px) {
-      body { padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+      body { padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
       header { top: 0; }
       .topbar {
         grid-template-columns: 1fr;
-        padding: 12px 14px 10px;
-        gap: 10px;
+        padding: calc(14px + env(safe-area-inset-top)) 14px 12px;
+        gap: 12px;
+        align-items: stretch;
+      }
+      .app-brand {
+        align-items: flex-start;
+        min-height: 58px;
+      }
+      .app-brand img {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        margin-top: 1px;
       }
       .subtitle { font-size: 0.8rem; }
       h1 { font-size: 1.22rem; }
@@ -430,18 +447,11 @@
       .chip { flex: 0 0 auto; }
       .calc-menu { position: static; }
       .tabs {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 9;
+        position: static;
         width: 100%;
-        border-radius: 0;
-        border-left: 0;
-        border-right: 0;
-        border-bottom: 0;
-        padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-        box-shadow: 0 -10px 26px rgba(17, 38, 33, 0.12);
+        border-radius: 8px;
+        padding: 4px;
+        box-shadow: none;
       }
       .tab { flex: 1; min-width: 0; }
       .protocol-item summary {
@@ -2119,6 +2129,92 @@
       }
     };
 
+    const levelMedicationAccess = {
+      dispensary: {
+        default: 'Use only essential first-contact medicines normally stocked at clinic level: oxygen if available, ORS, IV/IO fluids where trained, glucose/dextrose, paracetamol, salbutamol, adrenaline IM, first-dose antibiotic/antimalarial when supplied, and obstetric first-line medicines if maternity stock exists.',
+        Core: 'Use ABCDE supplies and essential emergency medicines: oxygen if available, suction/airway adjuncts if stocked, IV/IO fluids, dextrose, adrenaline IM, salbutamol, naloxone if stocked, and first-dose treatment only within clinic scope.',
+        Resus: 'Adrenaline IM for anaphylaxis and BLS/AED if available; advanced airway drugs, infusions, thrombolysis, blood products, and ventilators are not assumed.',
+        Obstetric: 'Oxytocin, magnesium sulfate, antihypertensive, antibiotics, and tranexamic acid depend on local maternity stock; give first safe dose if available and do not delay transfer for missing medicines.',
+        Neonatal: 'Warmth, bag-mask ventilation, glucose support, oxygen if available, and first-dose antibiotics where stocked; CPAP, ventilation, exchange transfusion, and NICU drugs are not assumed.',
+        Paediatric: 'Use weight-based ORS, dextrose, oxygen if available, antimalarial/antibiotic first dose where stocked, and cautious fluids; transfusion, ventilatory support, and complex infusions are not assumed.',
+        Trauma: 'Analgesia, dressing, pressure/tourniquet when appropriate, splinting, tetanus/antibiotic first dose if stocked; blood, theatre, CT, and specialist surgery are not available.',
+        Surgical: 'Analgesia, antiemetic, IV fluids, and antibiotic first dose if sepsis/peritonitis is suspected; no theatre, source control, CT, endoscopy, or blood bank.',
+        Infectious: 'ORS, antipyretic, malaria testing/treatment if stocked, first-dose antibiotic for severe infection where supplied, and isolation/notification; oxygen and IV therapy vary.',
+        'Mental Health': 'Use verbal de-escalation and treat reversible medical causes; sedating medicines only if stocked, within protocol, and monitoring is possible.'
+      },
+      healthCentre: {
+        default: 'Use essential medicines commonly available at health-centre level: oxygen, IV fluids, dextrose, common antibiotics, antimalarials, bronchodilators, analgesics, anticonvulsants, uterotonics, magnesium sulfate, antihypertensives, and basic wound care, subject to local stock.',
+        Resus: 'Provide oxygen, bag-mask support, adrenaline, dextrose, salbutamol/ipratropium where stocked, IV fluids, benzodiazepine for seizure, and AED/defibrillation if available; ICU infusions and invasive ventilation are not assumed.',
+        Obstetric: 'BEmONC medicines should be prioritized: oxytocin, misoprostol where used, magnesium sulfate, antihypertensive, antibiotics, tranexamic acid if stocked, IV fluids, and blood request/transfer pathway.',
+        Neonatal: 'Use newborn corner supplies, warmth, bag-mask ventilation, oxygen, dextrose, antibiotics, and feeding support; CPAP/lab monitoring may be limited and ventilation/NICU are not assumed.',
+        Paediatric: 'Use oxygen, glucose, ORS/IV fluids, antibiotics, antimalarials, bronchodilators, anticonvulsants, and transfusion referral if severe anaemia; complex infusions and PICU care are not assumed.',
+        Trauma: 'Use analgesia, tetanus, antibiotics for open wounds, splinting, dressings, oxygen/fluids, and basic X-ray if present; blood/theatre availability is limited or absent.',
+        Surgical: 'Give analgesia, antiemetic, IV fluids, antibiotics, nil by mouth, and call district/regional surgical team; source control is limited unless local capability exists.',
+        Infectious: 'Start national first-line therapy for malaria, pneumonia, sepsis, meningitis suspicion, diarrhoeal dehydration, HIV/TB emergencies within scope; isolate and notify outbreaks.',
+        'Mental Health': 'Use de-escalation, observation, treatment of medical causes, and protocol sedation only with airway/vital-sign monitoring and a safe space.'
+      },
+      district: {
+        default: 'Use district emergency stock: oxygen, IV fluids, dextrose, antibiotics, antimalarials, anticonvulsants, bronchodilators, insulin with potassium/glucose monitoring, magnesium sulfate, uterotonics, TXA, analgesia, blood pathway where available, and basic anaesthesia/theatre medicines.',
+        Resus: 'Use oxygen, suction, bag-mask, defibrillator, adrenaline, amiodarone where stocked, dextrose, calcium for hyperkalaemia when available, bronchodilators, benzodiazepines, IV fluids, and blood activation if needed.',
+        Obstetric: 'Use CEmONC medicines and services where available: oxytocin/misoprostol, TXA, magnesium sulfate, hydralazine/labetalol/nifedipine, antibiotics, blood, anaesthesia, theatre, and newborn support.',
+        Neonatal: 'Use newborn/NBU medicines and supplies: warmth, oxygen, glucose, antibiotics, fluids/feeding, phototherapy where available; transfer for CPAP/ventilation/surgery/extreme prematurity.',
+        Paediatric: 'Use oxygen, IV/IO access, dextrose, antibiotics, artesunate, anticonvulsants, bronchodilators, transfusion pathway, and ward monitoring; transfer for PICU/dialysis/complex surgery.',
+        Trauma: 'Use analgesia, TXA for major bleeding where indicated, antibiotics/tetanus, splinting, X-ray/lab, blood pathway, and theatre for basic source control; transfer neurosurgery/vascular/major burns/ICU.',
+        Surgical: 'Use IV fluids, analgesia, antibiotics, antiemetics, blood pathway, labs/imaging, and theatre/source control when within district capability; transfer for unavailable specialty care.',
+        Infectious: 'Use admission, oxygen, IV antibiotics, artesunate, fluids, glucose, isolation, notification, and lab support; transfer organ failure, dialysis, ICU, or advanced diagnostics.',
+        'Mental Health': 'Use mhGAP-compatible assessment, safe observation, treatment of medical causes, haloperidol/benzodiazepine only with monitoring, and psychiatric referral for high-risk cases.'
+      },
+      regional: {
+        default: 'Use specialist formulary and services: blood bank, theatre, HDU, broader antibiotics, anticoagulation, insulin/electrolyte protocols, specialist imaging, procedural sedation/anaesthesia, and monitored infusions where available.',
+        Resus: 'Run ALS/HDU pathways with defibrillation, emergency drugs, oxygen/NIV, monitored infusions, vasopressors where protocol allows, blood products, and rapid specialty review.',
+        Obstetric: 'Use specialist obstetric/HDU pathway with blood bank, theatre, anaesthesia, magnesium, antihypertensives, TXA, antibiotics, uterotonics, and neonatal team.',
+        Neonatal: 'Use NBU/NICU-level medicines where available: oxygen/CPAP, antibiotics, glucose/fluids, phototherapy, thermal care, and neonatal specialist review; escalate if ventilation/surgery unavailable.',
+        Paediatric: 'Use paediatric specialist/HDU medicines, transfusion, oxygen/CPAP where available, advanced antibiotics, anticonvulsants, and surgery support; escalate PICU/oncology/dialysis needs.',
+        Trauma: 'Use trauma/surgical/orthopaedic/anaesthetic pathways, blood products, TXA, antibiotics, imaging, and theatre; escalate only for neurosurgical, vascular, burns, spine/pelvic, or ICU capacity gaps.',
+        Surgical: 'Use specialist surgery, endoscopy where available, imaging, blood, anaesthesia, antibiotics, and source control; escalate subspecialty/interventional radiology/ICU gaps.',
+        Infectious: 'Use advanced antimicrobial choices per STG/local antibiogram, isolation, diagnostics, HIV/TB specialist input, dialysis/ICU referral if not available, and public health coordination.',
+        'Mental Health': 'Use safe observation, medical workup, supervised sedation, psychiatric review, intoxication/withdrawal treatment, and admission pathway when indicated.'
+      },
+      tertiary: {
+        default: 'Assume the broadest formulary and specialist support: ICU/HDU medicines, blood products, advanced antimicrobials, anticoagulation/thrombolysis pathways, dialysis, advanced imaging, interventional procedures, theatre, and subspecialty consultation, subject to real-time stock and bed status.',
+        Resus: 'Activate definitive resuscitation: ALS team, airway/ventilation, vasopressors, blood products, ICU, cath lab/thrombolysis/ECMO-level referral only if the national centre lacks that service.',
+        Obstetric: 'Use definitive maternal-fetal pathway: senior obstetrician, anaesthesia, theatre, massive transfusion, ICU/HDU, magnesium, antihypertensives, TXA, uterotonics, antibiotics, and neonatal specialist support.',
+        Neonatal: 'Use NICU pathway with CPAP/ventilation, surfactant where indicated, antibiotics, glucose/fluids, phototherapy/exchange pathway, surgery consult, and subspecialty care.',
+        Paediatric: 'Use PICU/subspecialty pathway with advanced antimicrobials, ventilation, vasoactive infusions, dialysis, transfusion, oncology/surgery/neurosurgery review, and multidisciplinary planning.',
+        Trauma: 'Activate definitive trauma pathway: massive transfusion, CT, theatre, ICU, neurosurgery/vascular/orthoplastic/burns teams, TXA/antibiotics/tetanus, and rehabilitation planning.',
+        Surgical: 'Use definitive source control with subspecialty surgery, endoscopy/intervention, blood products, ICU, advanced imaging, and antimicrobial stewardship.',
+        Infectious: 'Use infectious disease/microbiology input, advanced diagnostics, antimicrobial stewardship, isolation, ICU/dialysis, HIV/TB specialist care, and public health notification.',
+        'Mental Health': 'Use consultation-liaison psychiatry, secure observation, medical/toxicology workup, supervised sedation, admission, and safeguarding/legal pathway as indicated.'
+      }
+    };
+
+    function nextStepFor(protocol) {
+      const options = {
+        dispensary: {
+          red: 'Next step: start first safe treatment, pre-alert the receiving facility, and transfer immediately after stabilization; do not wait for full workup.',
+          amber: 'Next step: treat within scope, observe only if improving clearly, and refer the same day if diagnostics, medicines, monitoring, blood, or procedures are needed.'
+        },
+        healthCentre: {
+          red: 'Next step: stabilize, give time-critical medicines available at this level, call the district/regional team early, and transfer for blood, theatre, ICU/HDU, advanced imaging, or persistent danger signs.',
+          amber: 'Next step: begin protocol care and short observation; transfer if no clear response, if stock is missing, or if the diagnosis requires surgery, specialist review, or prolonged monitoring.'
+        },
+        district: {
+          red: 'Next step: manage actively at district level while arranging referral only for specialist procedure, ICU/HDU, dialysis, neurosurgery/vascular care, major burns, cath lab, or non-response beyond district capacity.',
+          amber: 'Next step: complete district-level assessment and treatment, admit or operate where capable, and refer for unavailable diagnostics, source control, blood, or specialty care.'
+        },
+        regional: {
+          red: 'Next step: activate the relevant specialist/HDU pathway, support lower-level referral, and refer onward only for subspecialty service, advanced ICU, dialysis, neurosurgery, cath lab, or capacity limit.',
+          amber: 'Next step: use specialist diagnostics and treatment locally, then admit, discharge with follow-up, back-refer, or escalate based on response and service availability.'
+        },
+        tertiary: {
+          red: 'Next step: activate definitive national/zonal emergency pathway now; involve ICU/HDU, theatre, imaging, blood bank, and subspecialists. Do not use routine refer-if-unstable advice at this level; transfer only for an unavailable superspecialty service or capacity failure.',
+          amber: 'Next step: complete specialist workup and definitive management locally, then plan admission, procedure, discharge, or down-referral after stabilization.'
+        }
+      };
+      const levelOptions = options[state.level] || options.district;
+      return levelOptions[protocol.urgency] || levelOptions.amber;
+    }
+
     function sourceLinks(keys) {
       return keys.map(k => `<a href="${sources[k][1]}" target="_blank" rel="noopener">${sources[k][0]}</a>`).join(' | ');
     }
@@ -2126,12 +2222,22 @@
     function levelAdvice(protocol) {
       const level = facilityLevels[state.level] || facilityLevels.district;
       const planSet = levelPlans[state.level] || levelPlans.district;
+      const medSet = levelMedicationAccess[state.level] || levelMedicationAccess.district;
       const tailored = planSet[protocol.category] || planSet.default;
+      const medicines = medSet[protocol.category] || medSet.default;
       const urgent = protocol.urgency === 'red'
         ? 'Treat as immediate resuscitation priority at this level.'
         : 'Manage promptly with reassessment and clear escalation criteria.';
       const department = protocol.category;
-      return `<strong>${level.label}:</strong> ${urgent} ${tailored} <span class="small">Capacity assumption: ${level.capacity} Department pathway: ${department}.</span>`;
+      return `
+        <strong>${level.label}:</strong> ${urgent}
+        <ul>
+          <li><strong>Management at this level:</strong> ${tailored}</li>
+          <li><strong>Medication availability:</strong> ${medicines}</li>
+          <li><strong>Next step:</strong> ${nextStepFor(protocol).replace(/^Next step:\s*/, '')}</li>
+        </ul>
+        <span class="small">Capacity assumption: ${level.capacity} Department pathway: ${department}.</span>
+      `;
     }
 
     function medicationBlock(protocol) {
